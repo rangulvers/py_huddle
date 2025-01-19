@@ -1,0 +1,16 @@
+[project]
+name = "py-huddle"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "bs4>=0.0.2",
+    "loguru>=0.7.3",
+    "pandas>=2.2.3",
+    "pdfrw>=0.4",
+    "reportlab>=4.2.5",
+    "requests>=2.32.3",
+    "streamlit>=1.41.1",
+    "xlrd>=2.0.1",
+]
