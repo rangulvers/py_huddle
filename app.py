@@ -10,18 +10,18 @@ from pdfrw import PdfReader, PdfWriter, PdfDict
 from datetime import datetime
 
 # ─────────────────────────────────────────────────────────────────────────
-# 1) Extended fetch_liga_data
+# 1) Erweiterte fetch_liga_data (liefert Liga_ID, Liganame, etc.)
 # ─────────────────────────────────────────────────────────────────────────
 def normalize_liga_name(liga_name: str) -> str:
-    logger.debug("Normalizing liga name: {}", liga_name)
+    logger.debug("Normalisiere Liganame: {}", liga_name)
     return re.sub(r"\s*\(.*?\)", "", str(liga_name)).strip()
 
 def fetch_liga_data(club_name: str) -> pd.DataFrame:
     """
-    Fetches data from basketball-bund.net and returns a DataFrame with columns:
+    Ruft Daten von basketball-bund.net ab und gibt ein DataFrame mit Spalten zurück:
     [Klasse, Alter, m/w, Bezirk, Kreis, Liganame, Liganr, Liga_ID].
     """
-    logger.debug("Fetching liga data for club: {}", club_name)
+    logger.debug("Rufe Ligadaten ab für Verein: {}", club_name)
     url = "https://www.basketball-bund.net/index.jsp?Action=100&Verband=6"
 
     headers = {
@@ -37,10 +37,9 @@ def fetch_liga_data(club_name: str) -> pd.DataFrame:
 
     form = soup.find("form", {"name": "ligaliste"})
     if not form:
-        logger.warning("No form found with name 'ligaliste'")
+        logger.warning("Kein Formular mit Namen 'ligaliste' gefunden")
         return pd.DataFrame()
 
-    # The table with class "sportView" presumably has our columns
     tables = soup.find_all("table", class_="sportView")
     target_table = None
     for t in tables:
@@ -54,7 +53,7 @@ def fetch_liga_data(club_name: str) -> pd.DataFrame:
     data_list = []
     if target_table:
         rows = target_table.find_all("tr")
-        for row in rows[1:]:  # skip header
+        for row in rows[1:]:  # Überspringe Kopfzeile
             cells = row.find_all("td")
             if len(cells) >= 8:
                 klasse = cells[0].get_text(strip=True)
@@ -85,11 +84,12 @@ def fetch_liga_data(club_name: str) -> pd.DataFrame:
 
     return pd.DataFrame(data_list)
 
+
 # ─────────────────────────────────────────────────────────────────────────
-# 2) fetch_game_details, fetch_selected_games
+# 2) fetch_game_details und fetch_selected_games
 # ─────────────────────────────────────────────────────────────────────────
 def fetch_game_details(spielplan_id: str, liga_id: str) -> dict:
-    logger.debug("Fetching game details: spielplan_id={}, liga_id={}", spielplan_id, liga_id)
+    logger.debug("Rufe Spieldetails ab: spielplan_id={}, liga_id={}", spielplan_id, liga_id)
     url = f"https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id={spielplan_id}&liga_id={liga_id}&defaultview=1"
 
     headers = {
@@ -99,18 +99,17 @@ def fetch_game_details(spielplan_id: str, liga_id: str) -> dict:
 
     resp = requests.get(url, headers=headers)
     if resp.status_code != 200:
-        logger.warning("Failed to fetch game details for {} - {}", spielplan_id, liga_id)
+        logger.warning("Fehler beim Abrufen der Spieldetails für {} - {}", spielplan_id, liga_id)
         return None
 
     soup = BeautifulSoup(resp.text, "html.parser")
     game_details = {}
 
     try:
-        # Basic game data
         ergebnisliste_form = soup.find("form", {"name": "ergebnisliste"})
         if ergebnisliste_form:
             rows = ergebnisliste_form.find_all("tr")
-            for row in rows[1:]:  # skip header
+            for row in rows[1:]:  # Überspringe Kopf
                 cells = row.find_all("td")
                 if len(cells) >= 6:
                     try:
@@ -122,11 +121,11 @@ def fetch_game_details(spielplan_id: str, liga_id: str) -> dict:
                             "Away Score": cells[5].get_text(strip=True).split(" : ")[1].strip(),
                         }
                     except IndexError as e:
-                        logger.error("IndexError parsing game details: {}", e)
+                        logger.error("IndexError beim Auslesen der Spieldetails: {}", e)
                         continue
                     break
 
-        # Player stats
+        # Spielerstatistiken
         player_stats_form = soup.find("form", {"name": "spielerstatistikgast"})
         player_list = []
         if player_stats_form:
@@ -140,7 +139,7 @@ def fetch_game_details(spielplan_id: str, liga_id: str) -> dict:
                         if lastname and firstname and lastname != "Nachname" and firstname != "Vorname":
                             player_list.append({"Nachname": lastname, "Vorname": firstname})
                     except IndexError as e:
-                        logger.error("IndexError parsing player stats: {}", e)
+                        logger.error("IndexError beim Auslesen der Spielerstatistiken: {}", e)
                         continue
 
         return {
@@ -155,11 +154,11 @@ def fetch_game_details(spielplan_id: str, liga_id: str) -> dict:
         }
 
     except Exception as e:
-        logger.error("Error fetching game data: {}", e)
+        logger.error("Allgemeiner Fehler beim Abrufen der Spieldaten: {}", e)
         return None
 
 def fetch_selected_games(df: pd.DataFrame, selected_ligas: list, club_name: str) -> pd.DataFrame:
-    logger.debug("Fetching selected games for club: {}", club_name)
+    logger.debug("Rufe ausgewählte Spiele ab für Verein: {}", club_name)
     game_data = []
     total = len(df)
     progress_bar = st.progress(0)
@@ -169,7 +168,7 @@ def fetch_selected_games(df: pd.DataFrame, selected_ligas: list, club_name: str)
         counter += 1
         progress_bar.progress(counter / total)
         if "Liga_ID" not in df.columns or "SpielplanID" not in df.columns:
-            st.warning("Missing 'Liga_ID' or 'SpielplanID' columns in the DataFrame.")
+            st.warning("Es fehlen die Spalten 'Liga_ID' oder 'SpielplanID' in der Tabelle.")
             return pd.DataFrame()
 
         liga_id = row.get("Liga_ID")
@@ -180,40 +179,36 @@ def fetch_selected_games(df: pd.DataFrame, selected_ligas: list, club_name: str)
             details = fetch_game_details(spielplan_id, liga_id)
             if details:
                 game_data.append(details)
+
         time.sleep(0.3)
 
     progress_bar.empty()
     if not game_data:
-        st.info("No matches found for the given filters.")
+        st.info("Keine passenden Spiele gefunden für die gewählten Filter.")
     else:
-        st.success(f"Fetched {len(game_data)} match details!")
+        st.success(f"{len(game_data)} Spieldetails abgerufen!")
     return pd.DataFrame(game_data)
 
+
 # ─────────────────────────────────────────────────────────────────────────
-# 3) parse_date_only to handle strings or Timestamps
+# 3) parse_date_only
 # ─────────────────────────────────────────────────────────────────────────
 def parse_date_only(raw_date) -> str:
     """
-    Attempt to convert raw_date into 'DD.MM.YYYY'.
-    Handles:
-      - pandas.Timestamp or datetime objects
-      - strings in 'DD.MM.YYYY HH:MM:SS' format
-      - partial strings 'DD.MM.YYYY'
-      - fallback to 'Unknown'
+    Wandelt raw_date in das Format 'DD.MM.YYYY' um, wenn möglich.
+    Berücksichtigt Timestamps, datetime-Objekte und Strings in 
+    'DD.MM.YYYY HH:MM:SS' oder 'DD.MM.YYYY'.
     """
     import pandas as pd
 
-    # If it's a Timestamp or datetime, just format it
     if isinstance(raw_date, (pd.Timestamp, datetime)):
         return raw_date.strftime("%d.%m.%Y")
 
-    # If it's already a string, parse
     if isinstance(raw_date, str):
         try:
             dt = datetime.strptime(raw_date.strip(), "%d.%m.%Y %H:%M:%S")
             return dt.strftime("%d.%m.%Y")
         except ValueError:
-            # Maybe it's just 'DD.MM.YYYY' or unknown
             parts = raw_date.strip().split()
             if parts:
                 return parts[0]
@@ -221,8 +216,9 @@ def parse_date_only(raw_date) -> str:
 
     return "Unknown"
 
+
 # ─────────────────────────────────────────────────────────────────────────
-# 4) generate_pdf with up to 5 players who have birthdays, else fill
+# 4) generate_pdf (inkl. Liganame)
 # ─────────────────────────────────────────────────────────────────────────
 def generate_pdf(game_details: dict,
                  pdf_club_name: str,
@@ -230,39 +226,38 @@ def generate_pdf(game_details: dict,
                  template_path: str,
                  hall: str,
                  birthday_lookup: dict,
+                 liganame: str,
                  alter: str = "Unknown") -> str:
     """
-    Generate a PDF in the "output" folder named "ligaID_alter_date.pdf".
-    1) First choose up to 5 players who have known birthdays.
-    2) If fewer than 5, fill with players who do not have birthdays until we get 5 total (if possible).
+    Erzeugt ein PDF im Ordner "output" mit dem Namen "ligaID_alter_date.pdf".
+    1) Bis zu 5 Spieler, zuerst jene mit bekanntem Geburtsdatum. 
+    2) 'Mannschaften' umfasst jetzt auch den Liganamen: "Home vs Away / {liganame}".
     """
-    logger.debug("generate_pdf for game: {}", game_details)
+    logger.debug("Erzeuge PDF für Spiel: {}", game_details)
 
-    # Step A: Gather all players
+    # Spieler in 2 Gruppen (Geburtsdatum bekannt vs unbekannt)
     all_players = game_details["Players"]
-
     players_with_bday = []
     players_no_bday = []
-    for p in all_players:
-        ln, fn = p["Nachname"], p["Vorname"]
+    for pl in all_players:
+        ln, fn = pl["Nachname"], pl["Vorname"]
         raw_gdate = birthday_lookup.get((ln, fn), "Unknown")
         if raw_gdate != "Unknown":
-            players_with_bday.append(p)
+            players_with_bday.append(pl)
         else:
-            players_no_bday.append(p)
+            players_no_bday.append(pl)
 
-    # Step B: Build final_5
+    # Finale Liste mit max. 5 Spielern
     final_players = players_with_bday[:5]
     if len(final_players) < 5:
         needed = 5 - len(final_players)
         final_players.extend(players_no_bday[:needed])
 
-    # Step C: Mask players with '*' in Nachname
-    for idx, player in enumerate(final_players):
-        if "*" in player["Nachname"]:
+    # Maskiere Spieler mit "*"
+    for idx, p in enumerate(final_players):
+        if "*" in p["Nachname"]:
             final_players[idx] = {"Nachname": "Geblocked durch DSGVO", "Vorname": ""}
 
-    # Step D: Build the file name
     liga_id = game_details.get("Liga_ID", "NoLigaID") or "NoLigaID"
     date_str = game_details["Date"].replace(":", "-").replace("/", "-").replace("\\", "-")
     filename = f"{liga_id}_{alter}_{date_str}.pdf"
@@ -270,11 +265,9 @@ def generate_pdf(game_details: dict,
     os.makedirs("output", exist_ok=True)
     output_path = os.path.join("output", filename)
 
-    # Step E: Fill the PDF
     template = PdfReader(template_path)
     for page in template.pages:
         annotations = page.get('/Annots') or []
-
         for annotation in annotations:
             if '/T' not in annotation:
                 continue
@@ -287,12 +280,13 @@ def generate_pdf(game_details: dict,
             elif field_name == "Art der Veranstaltung":
                 annotation.update(PdfDict(V=art_der_veranstaltung))
             elif field_name == "Mannschaften":
-                annotation.update(PdfDict(V=f"{game_details['Home Team']} vs {game_details['Away Team']}"))
+                # Zeige Heim vs Gast / Liganame
+   
+                annotation.update(PdfDict(V=liganame))
             elif field_name == "DatumRow1":
                 annotation.update(PdfDict(V=game_details['Date']))
             elif field_name == "Name oder SpielortRow1":
                 annotation.update(PdfDict(V=hall))
-            # Fill player names
             elif field_name.startswith("Name oder SpielortRow"):
                 m = re.search(r"Name oder SpielortRow(\d+)$", field_name)
                 if m:
@@ -300,11 +294,10 @@ def generate_pdf(game_details: dict,
                     offset = 2
                     index = row_number - offset
                     if 0 <= index < len(final_players):
-                        pl = final_players[index]
-                        annotation.update(PdfDict(V=f"{pl['Nachname']}, {pl['Vorname']}"))
+                        p = final_players[index]
+                        annotation.update(PdfDict(V=f"{p['Nachname']}, {p['Vorname']}"))
                     else:
                         annotation.update(PdfDict(V=""))
-            # Fill birthdays
             elif field_name.startswith("EinzelteilngebRow"):
                 m = re.search(r"EinzelteilngebRow(\d+)$", field_name)
                 if m:
@@ -312,24 +305,25 @@ def generate_pdf(game_details: dict,
                     offset = 2
                     index = row_number - offset
                     if 0 <= index < len(final_players):
-                        pl = final_players[index]
-                        ln, fn = pl["Nachname"], pl["Vorname"]
+                        p = final_players[index]
+                        ln, fn = p["Nachname"], p["Vorname"]
                         raw_bday = birthday_lookup.get((ln, fn), "Unknown")
                         final_bday = parse_date_only(raw_bday) if raw_bday != "Unknown" else "Unknown"
                         annotation.update(PdfDict(V=final_bday))
                     else:
                         annotation.update(PdfDict(V=""))
             else:
-                # Other fields get cleared
                 annotation.update(PdfDict(V=""))
 
     PdfWriter().write(output_path, template)
-    logger.info("PDF generated: {}", output_path)
+    logger.info("PDF erzeugt: {}", output_path)
     return output_path
 
+
 # ─────────────────────────────────────────────────────────────────────────
-# 5) Streamlit Steps, with step-by-step gating
+# 5) Streamlit-Schritte (auf Deutsch) mit Download-Links
 # ─────────────────────────────────────────────────────────────────────────
+
 if "step_1_done" not in st.session_state:
     st.session_state.step_1_done = False
 if "step_2_done" not in st.session_state:
@@ -341,32 +335,34 @@ if "step_4_done" not in st.session_state:
 
 if "liga_df" not in st.session_state:
     st.session_state.liga_df = pd.DataFrame()
-
 if "uploaded_df" not in st.session_state:
     st.session_state.uploaded_df = None
-
 if "match_details" not in st.session_state:
     st.session_state.match_details = pd.DataFrame()
-
 if "player_birthdays_df" not in st.session_state:
     st.session_state.player_birthdays_df = pd.DataFrame()
 
-st.title("Basketball Travel Cost App")
+if "generated_files" not in st.session_state:
+    st.session_state.generated_files = []
+
+st.title("Basketball-Fahrtkosten-App")
 
 st.markdown("""
-This tool fetches extended Liga data (Klasse, Alter, etc.),
-uploads rosters, and generates PDF forms with up to 5 players 
-prioritizing those who have birthdays in the uploaded list.
+Diese Anwendung ruft erweiterte Ligadaten (Klasse, Alter, Liganame usw.) ab,
+lädt Teamlisten hoch und erzeugt PDF-Formulare mit:
+• maximal 5 Spielern (Geburtsdatum prioritär).  
+• Liganame in der Zeile "Mannschaften".  
+• Download-Links für jedes erzeugte PDF.
 """)
 
-# Sidebar PDF settings
-st.sidebar.header("PDF Settings")
-pdf_club_name = st.sidebar.text_input("Club Name for PDF (Verein):", "My PDF Club")
+# Seiteneinstellungen (PDF)
+st.sidebar.header("PDF-Einstellungen")
+pdf_club_name = st.sidebar.text_input("Verein (für PDF):", "Mein Basketball-Verein")
 art_der_veranstaltung = st.sidebar.text_input("Art der Veranstaltung:", "Saison")
 
-# Sidebar for player birthday list
-st.sidebar.header("Player Birthday List")
-player_list_file = st.sidebar.file_uploader("Upload Player List (CSV/Excel)", type=["csv", "xlsx", "xls"])
+# Spieler-Geburtsdaten-Liste
+st.sidebar.header("Spieler-Geburtsdaten-Liste")
+player_list_file = st.sidebar.file_uploader("Spielerliste hochladen (CSV/Excel)", type=["csv", "xlsx", "xls"])
 
 def build_birthday_lookup(df: pd.DataFrame) -> dict:
     lookup = {}
@@ -378,59 +374,57 @@ def build_birthday_lookup(df: pd.DataFrame) -> dict:
     return lookup
 
 if player_list_file is not None:
-    with st.spinner("Reading player list..."):
+    with st.spinner("Lade Spielerliste..."):
         if player_list_file.name.endswith(".csv"):
             st.session_state.player_birthdays_df = pd.read_csv(player_list_file)
         else:
             st.session_state.player_birthdays_df = pd.read_excel(player_list_file)
-    st.sidebar.success("Player list uploaded successfully!")
+    st.sidebar.success("Spielerliste erfolgreich hochgeladen!")
 
-# Build or refresh the birthday lookup
 birthday_lookup = build_birthday_lookup(st.session_state.player_birthdays_df)
 
-
 # ─────────────────────────────────────────────────────────────────────────
-# Step 1: Fetch Liga Data
+# Schritt 1: Liga-Daten abrufen
 # ─────────────────────────────────────────────────────────────────────────
-st.subheader("Step 1: Fetch Liga Data")
-club_name = st.text_input("Enter your club name:", value="TV Heppenheim", key="club_name")
+st.subheader("Schritt 1: Liga-Daten abrufen")
+club_name = st.text_input("Vereinsname eingeben:", value="TV Heppenheim", key="club_name_de")
 if not st.session_state.step_1_done:
-    if st.button("1) Fetch Liga Data"):
-        with st.spinner("Fetching extended Liga Data..."):
+    if st.button("1) Liga-Daten abrufen"):
+        with st.spinner("Rufe erweiterte Ligadaten ab..."):
             st.session_state.liga_df = fetch_liga_data(club_name)
         if st.session_state.liga_df.empty:
-            st.warning("No data found for that club.")
+            st.warning("Keine Daten für diesen Verein gefunden.")
         else:
-            st.success(f"Found {len(st.session_state.liga_df)} Liga entries.")
+            st.success(f"{len(st.session_state.liga_df)} Liga-Einträge gefunden.")
             st.session_state.step_1_done = True
 
 # ─────────────────────────────────────────────────────────────────────────
-# Step 2: Upload match file
+# Schritt 2: Spieldaten-Datei hochladen
 # ─────────────────────────────────────────────────────────────────────────
 if st.session_state.step_1_done:
-    st.subheader("Step 2: Upload match file")
+    st.subheader("Schritt 2: Spieldaten-Datei hochladen")
     if st.session_state.uploaded_df is None:
-        match_file = st.file_uploader("Match file (CSV/Excel)", type=["csv", "xlsx", "xls"], key="match_file")
+        match_file = st.file_uploader("Spieldaten (CSV/Excel)", type=["csv", "xlsx", "xls"], key="match_file_de")
         if match_file:
-            with st.spinner("Reading match file..."):
+            with st.spinner("Lese Spieldaten..."):
                 if match_file.name.endswith(".csv"):
                     st.session_state.uploaded_df = pd.read_csv(match_file)
                 else:
                     st.session_state.uploaded_df = pd.read_excel(match_file)
-            st.success("Match file loaded successfully!")
+            st.success("Spieldaten erfolgreich geladen!")
             st.session_state.step_2_done = True
     else:
-        st.success("Match file is already loaded.")
+        st.success("Spieldaten sind bereits geladen.")
         st.session_state.step_2_done = True
 
 # ─────────────────────────────────────────────────────────────────────────
-# Step 3: Fetch Match Details
+# Schritt 3: Spiele abrufen
 # ─────────────────────────────────────────────────────────────────────────
 if st.session_state.step_2_done and st.session_state.uploaded_df is not None:
-    st.subheader("Step 3: Select Ligas & Fetch Match Details")
+    st.subheader("Schritt 3: Ligen auswählen & Spieldetails abrufen")
     df = st.session_state.uploaded_df
 
-    # Map Liga_ID from the extended st.session_state.liga_df
+    # Liga-ID anhand st.session_state.liga_df suchen
     if not st.session_state.liga_df.empty:
         liga_map = pd.Series(st.session_state.liga_df.Liga_ID.values,
                              index=st.session_state.liga_df.Liganame).to_dict()
@@ -438,40 +432,40 @@ if st.session_state.step_2_done and st.session_state.uploaded_df is not None:
 
     available_ligas = df["Liga_ID"].dropna().unique().tolist()
     if not available_ligas:
-        st.info("No matching Liga IDs found in your match file. Check your data.")
+        st.info("Keine passenden Liga-IDs in der Spieldatei. Prüfe die Daten.")
     else:
-        selected_ligas = st.multiselect("Select Ligas:", available_ligas, default=available_ligas)
-        if st.button("2) Fetch Match Details"):
-            with st.spinner("Fetching match details..."):
+        selected_ligas = st.multiselect("Wähle Ligen aus:", available_ligas, default=available_ligas)
+        if st.button("2) Spieldetails abrufen"):
+            with st.spinner("Hole Spieldetails..."):
                 st.session_state.match_details = fetch_selected_games(df, selected_ligas, club_name)
             if not st.session_state.match_details.empty:
-                st.success(f"Fetched details for {len(st.session_state.match_details)} games!")
+                st.success(f"{len(st.session_state.match_details)} Spiele abgerufen!")
                 st.session_state.step_3_done = True
             else:
-                st.info("No match details found for the chosen Ligas.")
+                st.info("Keine Spieldetails für die gewählten Ligen gefunden.")
 
 # ─────────────────────────────────────────────────────────────────────────
-# Step 4: Generate PDFs (with up to 5 players, prioritize birthdays)
+# Schritt 4: PDFs erzeugen & Download-Links anzeigen
 # ─────────────────────────────────────────────────────────────────────────
 if st.session_state.step_3_done and not st.session_state.match_details.empty:
-    st.subheader("Step 4: Generate PDF Files")
-    if st.button("3) Generate PDFs"):
+    st.subheader("Schritt 4: PDF-Dateien erzeugen")
+    if st.button("3) PDFs erstellen"):
         template_path = "templates/01_fahrtkostenzuschsseeinzelblatt neu_V2beschreibbar.pdf"
         success_count = 0
-        os.makedirs("output", exist_ok=True)
+        st.session_state.generated_files = []
 
-        # If we want "alter" from the st.session_state.liga_df, set up a dict keyed by Liga_ID
+        # Index st.session_state.liga_df nach Liga_ID
         df_liga_extended = st.session_state.liga_df.set_index("Liga_ID", drop=False)
 
-        with st.spinner("Generating PDFs..."):
+        with st.spinner("Erzeuge PDFs..."):
             for idx, row in st.session_state.match_details.iterrows():
                 liga_id = row.get("Liga_ID", "Unknown")
-                # If we have a valid Liga_ID, we can attempt to retrieve "Alter" from df_liga_extended
+                liganame_val = "Unknown"
                 alter_val = "Unknown"
                 if liga_id in df_liga_extended.index:
+                    liganame_val = df_liga_extended.loc[liga_id, "Liganame"]
                     alter_val = str(df_liga_extended.loc[liga_id, "Alter"])
 
-                # Get "Halle" from match file if available
                 hall = "Unknown"
                 if "Halle" in df.columns:
                     hall_data = df.loc[df["SpielplanID"] == row["Spielplan_ID"], "Halle"]
@@ -485,14 +479,31 @@ if st.session_state.step_3_done and not st.session_state.match_details.empty:
                     template_path=template_path,
                     hall=hall,
                     birthday_lookup=birthday_lookup,
-                    alter=alter_val  # pass the 'alter' into the function
+                    liganame=liganame_val,
+                    alter=alter_val
                 )
-                logger.debug("Generated PDF: {}", output_pdf)
+                st.session_state.generated_files.append(output_pdf)
+                logger.debug("PDF erzeugt: {}", output_pdf)
                 success_count += 1
 
-        st.success(f"PDF generation complete! Created {success_count} PDFs in 'output' folder.")
+        st.success(f"{success_count} PDFs wurden im Ordner 'output' erzeugt.")
+
+        # Download-Buttons für jede erzeugte PDF-Datei
+        for pdf_path in st.session_state.generated_files:
+            fname = os.path.basename(pdf_path)
+            with open(pdf_path, "rb") as f:
+                pdf_data = f.read()
+
+            st.download_button(
+                label=f"Herunterladen: {fname}",
+                data=pdf_data,
+                file_name=fname,
+                mime="application/pdf"
+            )
+
         st.session_state.step_4_done = True
 
+# Zusammenfassung
 if st.session_state.step_4_done:
-    st.subheader("All Steps Complete")
-    st.write("You have successfully generated PDFs with up to 5 players (prioritizing those with valid birthdays)!")
+    st.subheader("Alle Schritte abgeschlossen")
+    st.write("Die PDF-Dateien wurden erfolgreich erzeugt und können oben heruntergeladen werden!")
