@@ -1,3 +1,0 @@
-- Add Google Maps API to get distance between two points
-- check why "Alter" is not set correctly and returns UNKNOW in output
-- Fix Mannschaften Output in PDF
