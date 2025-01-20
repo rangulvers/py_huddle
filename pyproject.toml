@@ -9,6 +9,7 @@ dependencies = [
     "loguru>=0.7.3",
     "pandas>=2.2.3",
     "pdfrw>=0.4",
+    "python-dotenv>=1.0.1",
     "reportlab>=4.2.5",
     "requests>=2.32.3",
     "streamlit>=1.41.1",
