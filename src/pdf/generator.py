@@ -26,93 +26,132 @@ class PDFGenerator:
         event_type: str,
         birthday_lookup: Dict[str, str]
     ) -> Optional[PDFInfo]:
-        """
-        Generate PDF for a game.
-        
-        Args:
-            game_details: Dictionary with game details
-            liga_info: Liga information
-            club_name: Name of the club
-            event_type: Type of event
-            birthday_lookup: Dictionary mapping player names to birthdays
-            
-        Returns:
-            PDFInfo object if successful, None otherwise
-        """
+        """Generate PDF for a game."""
         try:
-            # Prepare data for PDF
-            date = game_details.get('date', 'Unknown')
-            liga_id = game_details.get('liga_id', 'Unknown')
+            logger.debug(f"Starting PDF generation for game: {game_details.get('Spielplan_ID', 'Unknown')}")
+            
+            # Extract date and liga_id
+            date = game_details.get('Date', 'Unknown')
+            liga_id = liga_info.liga_id if liga_info else 'Unknown'
             
             # Create filename
             filename = f"{liga_id}_{date}.pdf"
             filepath = os.path.join(self.output_dir, filename)
-
+            
             # Read template
             template = PdfReader(self.template_path)
             
-            # Prepare form fields
+            # Basic form fields
             data = {
-                PDF_FIELD_MAPPINGS["club_name"]: club_name,
-                PDF_FIELD_MAPPINGS["event_type"]: event_type,
-                PDF_FIELD_MAPPINGS["department"]: "Basketball",
-                PDF_FIELD_MAPPINGS["team"]: f"{liga_info.liganame}",
-                PDF_FIELD_MAPPINGS["date"]: date,
-                PDF_FIELD_MAPPINGS["location"]: (
-                    game_details.get('hall_address') or 
-                    game_details.get('hall_name', 'Unknown')
-                )
+                "(Verein)": club_name,
+                "(Art der Veranstaltung)": event_type,
+                "(Abteilung)": "Basketball",
+                "(Mannschaften)": f"{liga_info.liganame}"
             }
 
-            # Add distance if available
-            if game_details.get('distance'):
-                data[PDF_FIELD_MAPPINGS["distance"]] = f"{game_details['distance']:.1f}"
+            # Row 1: Game information
+            data["(DatumRow1)"] = date
 
-            # Process players
-            players = game_details.get('players', [])
+            # Get the home team's location since we're traveling there
+            home_team = game_details.get('Home Team', '')
+            home_hall = game_details.get('hall_name', 'Unknown')
+            logger.debug(f"Processing away game at {home_team}'s venue")
+            logger.debug(f"Home team: {home_team}")
+            logger.debug(f"Home hall: {home_hall}")
+
+            # Get the location information
+            location = f"{home_team} - {home_hall}" if home_team and home_hall else "Unknown"
+            data["(Name oder SpielortRow1)"] = location
+
+            if game_details.get('distance'):
+                data["(km  Hin und Rückfahrt Row1)"] = f"{game_details['distance']:.1f}"
+
+            logger.debug("Added game information to row 1")
+            logger.debug(f"Date: {date}")
+            logger.debug(f"Away game location: {data['(Name oder SpielortRow1)']}")
+            logger.debug(f"Travel distance: {data.get('(km  Hin und Rückfahrt Row1)', 'Not set')}")
+
+            # Process players starting from row 2
+            players = game_details.get('Players', [])
+            logger.debug(f"Processing {len(players)} players")
             has_unknown_birthdays = False
             
-            # Ensure exactly 5 players
-            player_count = 0
-            for idx in range(self.max_players):
-                field_key = f"player{idx + 1}"
-                
-                if player_count < len(players):
-                    player = players[player_count]
+            # Maximum 5 players, using rows 2-6
+            for idx, player in enumerate(players[:5], start=2):  # Start from row 2
+                try:
                     if player.get('is_masked', False):
-                        player_text = "Geblocked durch DSGVO"
+                        name_text = "Geblocked durch DSGVO"
+                        birthday_text = ""
                     else:
-                        name = f"{player['lastname']}, {player['firstname']}"
+                        name = f"{player['Nachname']}, {player['Vorname']}"
                         birthday = birthday_lookup.get(name, "")
                         if not birthday:
                             has_unknown_birthdays = True
-                        player_text = f"{name} {birthday}"
+                            logger.warning(f"No birthday found for player: {name}")
+                        
+                        name_text = name
+                        birthday_text = birthday
                     
-                    data[PDF_FIELD_MAPPINGS[field_key]] = player_text
-                    player_count += 1
-                else:
-                    data[PDF_FIELD_MAPPINGS[field_key]] = ""
+                    # Add name to Name oder Spielort field
+                    data[f"(Name oder SpielortRow{idx})"] = name_text
+                    # Add birthday to Einzelteilngeb field
+                    data[f"(EinzelteilngebRow{idx})"] = birthday_text
+                    
+                    logger.debug(f"Added to row {idx}:")
+                    logger.debug(f"  Name: {name_text}")
+                    logger.debug(f"  Birthday: {birthday_text}")
+                    
+                except Exception as e:
+                    logger.error(f"Error processing player for row {idx}: {e}")
+                    continue
+
+            logger.debug("Prepared form data:")
+            for key, value in data.items():
+                logger.debug(f"Field: {key} = {value}")
 
             # Fill form fields
+            field_update_count = 0
             for page in template.pages:
                 if page.Annots:
                     for annotation in page.Annots:
-                        if annotation.T and annotation.T in data:
-                            annotation.update(PdfDict(V=data[annotation.T]))
+                        if annotation.T:
+                            field_name = str(annotation.T)
+                            if field_name in data:
+                                value = data[field_name]
+                                annotation.update(
+                                    PdfDict(
+                                        V=value,
+                                        AP=None,
+                                        AS=None,
+                                        DV=value
+                                    )
+                                )
+                                field_update_count += 1
+                                logger.debug(f"Updated field {field_name} with value: {value}")
+
+            logger.debug(f"Updated {field_update_count} fields in the PDF")
 
             # Save PDF
-            PdfWriter().write(filepath, template)
+            writer = PdfWriter()
+            writer.write(filepath, template)
+            logger.debug(f"Saved PDF to: {filepath}")
+
+            # Verify file was created and has content
+            if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
+                logger.debug(f"Successfully created PDF: {filepath} ({os.path.getsize(filepath)} bytes)")
+            else:
+                logger.error(f"PDF file is empty or not created: {filepath}")
 
             return PDFInfo(
                 filepath=filepath,
                 liga_id=liga_id,
                 date=date,
                 team=liga_info.liganame,
-                players=players[:self.max_players],
+                players=players[:5],
                 distance=game_details.get('distance'),
                 has_unknown_birthdays=has_unknown_birthdays
             )
 
         except Exception as e:
-            logger.error(f"Error generating PDF: {e}")
+            logger.error(f"Error generating PDF: {e}", exc_info=True)
             return None

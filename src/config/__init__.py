@@ -1,3 +1,11 @@
+from dotenv import load_dotenv
+from loguru import logger
+import os
+
+# Load environment variables from a .env file
+load_dotenv()
+
+
 # Default configuration values
 HOME_GYM_ADDRESS = "Weiherhausstraße 8c, 64646 Heppenheim"
 
@@ -9,8 +17,10 @@ BASKETBALL_CONFIG = {
 
 # Google Maps API configuration
 GOOGLE_MAPS_CONFIG = {
-    "api_key": "YOUR_GOOGLE_MAPS_API_KEY"  # Replace with actual API key
+    "api_key": os.getenv("GOOGLE_API_KEY")  # Replace with actual API key
 }
+
+logger.info(f"Google Maps API key: {GOOGLE_MAPS_CONFIG['api_key']}")
 
 # Required columns for data validation
 REQUIRED_COLUMNS = {
@@ -29,7 +39,7 @@ ERROR_MESSAGES = {
 
 # PDF configuration
 PDF_CONFIG = {
-    "template_path": "templates/reisekosten_template.pdf",
+    "template_path": "templates/01_fahrtkostenzuschsseeinzelblatt neu_V2beschreibbar.pdf",
     "output_dir": "output/pdfs",
     "max_players": 5
 }

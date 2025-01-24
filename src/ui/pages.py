@@ -285,14 +285,20 @@ class MainPage:
                 st.error("❌ Keine Spieldaten vorhanden.")
                 return
 
+            logger.debug("Starting PDF generation process")
+            logger.debug(f"Match details shape: {match_details.shape}")
+            logger.debug(f"Columns available: {match_details.columns}")
+
             # Build birthday lookup
             birthday_lookup = DataProcessor.build_birthday_lookup(
                 st.session_state.player_birthdays_df
             )
+            logger.debug(f"Built birthday lookup with {len(birthday_lookup)} entries")
 
             # Get settings
             club_name = st.session_state.pdf_club_name
             event_type = st.session_state.art_der_veranstaltung
+            logger.debug(f"Using club_name: {club_name}, event_type: {event_type}")
 
             with st.spinner("Generiere PDFs..."):
                 total_games = len(match_details)
@@ -306,7 +312,10 @@ class MainPage:
                     start_time = time.time()
                     
                     for idx, row in match_details.iterrows():
-                        # Calculate progress and estimated time
+                        logger.debug(f"Processing game {idx + 1}/{total_games}")
+                        logger.debug(f"Game data: {row.to_dict()}")
+
+                        # Calculate progress and update UI
                         progress = idx / total_games
                         progress_bar.progress(progress)
                         
@@ -326,12 +335,17 @@ class MainPage:
                         Spiel: {row.get('Spielplan_ID', 'Unknown')}
                         """)
 
-                        # Create Liga object
-                        liga_info = DataProcessor.create_liga(
-                            st.session_state.liga_df[
-                                st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
-                            ].iloc[0]
-                        )
+                        # Get Liga info
+                        liga_df_filtered = st.session_state.liga_df[
+                            st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
+                        ]
+                        
+                        if liga_df_filtered.empty:
+                            logger.warning(f"No Liga info found for Liga_ID: {row['Liga_ID']}")
+                            continue
+
+                        liga_info = DataProcessor.create_liga(liga_df_filtered.iloc[0])
+                        logger.debug(f"Created Liga info: {liga_info}")
 
                         # Generate PDF
                         pdf_info = self.pdf_generator.generate_pdf(
@@ -344,36 +358,6 @@ class MainPage:
                         
                         if pdf_info:
                             pdf_infos.append(pdf_info)
-
-                    # Final progress update
-                    progress_bar.progress(1.0)
-                    
-                    # Clear progress indicators
-                    time.sleep(0.5)
-                    progress_container.empty()
-
-                if pdf_infos:
-                    st.success(f"✅ {len(pdf_infos)} PDFs erstellt!")
-                    st.session_state.generated_pdfs_info = pdf_infos
-                    
-                    # Analyze PDFs
-                    analysis = self.pdf_analyzer.analyze_pdfs(pdf_infos)
-                    
-                    # Show analysis results
-                    self.ui.render_analysis_results(analysis)
-                    
-                    # Show download links
-                    st.subheader("📥 PDFs herunterladen")
-                    for pdf_info in pdf_infos:
-                        filename = os.path.basename(pdf_info.filepath)
-                        with open(pdf_info.filepath, "rb") as file:
-                            st.download_button(
-                                label=f"📄 {filename}",
-                                data=file,
-                                file_name=filename,
-                                mime="application/pdf"
-                            )
-                    
-                    SessionState.update_progress(4)
-                else:
-                    st.error("❌ Keine PDFs konnten erstellt werden.")
+                            logger.debug(f"Successfully generated PDF: {pdf_info.filepath}")
+                        else:
+                            logger.error(f"Failed to generate PDF for game {idx + 1}")
