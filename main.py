@@ -1,31 +1,29 @@
 import streamlit as st
-from src.ui.pages import MainPage
-from src.config import APP_CONFIG
-import logging
 from loguru import logger
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger.add(
-    "app.log",
-    rotation="500 MB",
-    retention="10 days",
-    level="DEBUG"
-)
+from src.ui.pages import MainPage
+from src.ui.state import SessionState
 
 def main():
-    """Application entry point."""
+    """Main entry point of the application."""
     try:
-        # Initialize and render main page
+        # Configure logger
+        logger.add(
+            "app.log",
+            rotation="500 MB",
+            retention="10 days",
+            level="DEBUG"
+        )
+        
+        # Initialize session state
+        SessionState.init_state()
+        
+        # Create and render main page
         page = MainPage()
         page.render()
         
     except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
-        st.error(
-            "Ein unerwarteter Fehler ist aufgetreten. "
-            "Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support."
-        )
+        logger.error(f"Unexpected error: {e}", exc_info=True)
+        st.error(f"Ein unerwarteter Fehler ist aufgetreten: {str(e)}")
 
 if __name__ == "__main__":
     main()

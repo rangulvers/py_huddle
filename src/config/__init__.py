@@ -4,7 +4,7 @@ HOME_GYM_ADDRESS = "Weiherhausstraße 8c, 64646 Heppenheim"
 # Basketball-bund.net configuration
 BASKETBALL_CONFIG = {
     "base_url": "https://www.basketball-bund.net",
-    "verband": "HBV"  # Hessischer Basketball Verband
+    "verband": "6"  # Hessischer Basketball Verband
 }
 
 # Google Maps API configuration

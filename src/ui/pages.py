@@ -1,0 +1,377 @@
+import streamlit as st
+import pandas as pd
+import time
+import os
+from datetime import datetime
+from typing import List, Dict, Any
+from loguru import logger
+
+from src.ui.components import UIComponents, format_time_remaining
+from src.ui.state import SessionState
+from src.api.basketball import BasketballClient
+from src.api.google_maps import GoogleMapsClient
+from src.data.processing import DataProcessor
+from src.pdf.generator import PDFGenerator
+from src.pdf.analyzer import PDFAnalyzer
+
+class MainPage:
+    """Main page of the application."""
+    
+    def __init__(self):
+        """Initialize main page with required clients."""
+        self.basketball_client = BasketballClient()
+        self.google_maps_client = GoogleMapsClient()
+        self.pdf_generator = PDFGenerator()
+        self.pdf_analyzer = PDFAnalyzer()
+        self.ui = UIComponents()
+
+    def render(self):
+        """Render the main page."""
+        st.title("🏀 Basketball Reisekosten Generator")
+        
+        # Initialize session state
+        SessionState.init_state()
+        
+        # Render settings sidebar
+        self.ui.render_settings_sidebar()
+        
+        # Render steps
+        self._render_step_1()
+        if st.session_state.step_1_done:
+            self._render_step_2()
+        if st.session_state.step_2_done:
+            self._render_step_3()
+        if st.session_state.step_3_done:
+            self._render_step_4()
+
+    def _render_step_1(self):
+        """Render Step 1: Fetch Liga Data."""
+        st.header("1️⃣ Liga-Daten abrufen")
+        club_name = st.text_input("Vereinsname:", value="TV Heppenheim")
+        
+        # Store the club name in session state
+        st.session_state.club_name = club_name
+
+        if not st.session_state.step_1_done:
+            if st.button("Liga-Daten abrufen"):
+                with st.spinner("Hole Ligadaten..."):
+                    liga_data = self.basketball_client.fetch_liga_data(club_name)
+                    st.session_state.liga_df = liga_data
+
+                if liga_data.empty:
+                    st.error("❌ Keine Einträge gefunden.")
+                else:
+                    st.success(f"✅ {len(liga_data)} Liga-Einträge gefunden!")
+                    SessionState.update_progress(1)
+
+    def _render_step_2(self):
+        """Render Step 2: Upload Game Data and Player List."""
+        st.header("2️⃣ Daten hochladen")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("2.1 Spielerliste hochladen")
+            player_list_help = """
+            Die Spielerliste muss eine CSV- oder Excel-Datei sein mit den Spalten:
+            - Vorname
+            - Nachname
+            - Geburtsdatum
+            """
+            
+            if not st.session_state.get("player_data_status", False):
+                player_list_success = self.ui.render_file_upload(
+                    label="Spielerliste (CSV/Excel)",
+                    help_text=player_list_help,
+                    accepted_types=["csv", "xlsx", "xls"],
+                    key="player_upload",
+                    validation_context="spielerliste"
+                )
+            else:
+                st.success("✅ Spielerliste geladen")
+                if st.button("🔄 Andere Spielerliste laden"):
+                    st.session_state.player_birthdays_df = None
+                    st.session_state.player_data_status = False
+                    st.session_state.player_upload_status = False
+                    st.experimental_rerun()
+
+        with col2:
+            st.subheader("2.2 Spieldaten hochladen")
+            game_data_help = """
+            Die Spieldaten-Datei muss folgende Spalten enthalten:
+            - Liga
+            - SpielplanID
+            - Gast
+            - Halle
+            """
+            
+            if not st.session_state.get("game_data_status", False):
+                game_data_success = self.ui.render_file_upload(
+                    label="Spieldaten (CSV/Excel)",
+                    help_text=game_data_help,
+                    accepted_types=["csv", "xlsx", "xls"],
+                    key="game_upload",
+                    validation_context="spieldaten"
+                )
+            else:
+                st.success("✅ Spieldaten geladen")
+                if st.button("🔄 Andere Spieldaten laden"):
+                    st.session_state.uploaded_df = None
+                    st.session_state.game_data_status = False
+                    st.session_state.game_upload_status = False
+                    st.experimental_rerun()
+
+        # Check if both files are loaded
+        if (st.session_state.get("player_data_status", False) and 
+            st.session_state.get("game_data_status", False)):
+            st.success("✅ Alle erforderlichen Daten wurden geladen!")
+            
+            # Display data previews
+            with st.expander("📊 Datenvorschau", expanded=False):
+                st.subheader("Spielerliste")
+                st.dataframe(st.session_state.player_birthdays_df.head())
+                
+                st.subheader("Spieldaten")
+                st.dataframe(st.session_state.uploaded_df.head())
+                
+            SessionState.update_progress(2)
+        else:
+            st.warning("⚠️ Bitte laden Sie beide Dateien hoch, um fortzufahren.")
+
+    def _render_step_3(self):
+        """Render Step 3: Select Leagues and Fetch Details."""
+        st.header("3️⃣ Ligen auswählen & Spieldetails laden")
+        
+        df = st.session_state.uploaded_df
+        liga_df = st.session_state.liga_df
+        club_name = st.session_state.get("club_name", "TV Heppenheim")
+
+        if not liga_df.empty:
+            # Create Liga mapping
+            liga_map = pd.Series(
+                liga_df["Liga_ID"].values,
+                index=liga_df["Liganame"]
+            ).to_dict()
+            df["Liga_ID"] = df["Liga"].map(liga_map)
+
+            # Get unique Liga combinations
+            liga_info = (
+                df.dropna(subset=["Liga_ID"])
+                .drop_duplicates(subset=["Liga_ID"])
+                .merge(liga_df, on="Liga_ID", how="left")
+            )
+
+            if liga_info.empty:
+                st.warning("⚠️ Keine passenden Ligen gefunden.")
+            else:
+                # Create display options
+                options = []
+                for _, row in liga_info.iterrows():
+                    liga = DataProcessor.create_liga(row)
+                    options.append((liga.liga_id, liga.display_name))
+
+                if not options:
+                    st.warning("⚠️ Keine Ligen zum Auswählen vorhanden.")
+                else:
+                    # Create selection interface
+                    st.markdown("#### Verfügbare Ligen")
+                    display_labels = [opt[1] for opt in options]
+                    
+                    selected_display_labels = st.multiselect(
+                        "Wähle die zu verarbeitenden Ligen:",
+                        options=display_labels,
+                        default=display_labels,
+                        help="Wählen Sie die Ligen aus, für die PDFs erstellt werden sollen."
+                    )
+                    
+                    if st.button("🔄 Spieldetails laden", key="fetch_details"):
+                        # Convert labels back to IDs
+                        selected_liga_ids = []
+                        for sel_label in selected_display_labels:
+                            for (lid, lbl) in options:
+                                if lbl == sel_label:
+                                    selected_liga_ids.append(lid)
+                                    break
+
+                        # Filter games
+                        filtered_df = DataProcessor.filter_relevant_games(
+                            df, 
+                            selected_liga_ids,
+                            club_name
+                        )
+
+                        if not filtered_df.empty:
+                            with st.spinner("Lade Spieldetails..."):
+                                total_games = len(filtered_df)
+                                progress_container = st.container()
+                                
+                                with progress_container:
+                                    progress_bar = st.progress(0)
+                                    status_text = st.empty()
+                                    game_data = []
+                                    
+                                    for idx, row in filtered_df.iterrows():
+                                        # Calculate progress
+                                        current_idx = len(game_data)
+                                        progress = min(1.0, current_idx / total_games)
+                                        progress_bar.progress(progress)
+                                        
+                                        status_text.markdown(f"""
+                                        **Lade Spiel {current_idx + 1}/{total_games}**
+                                        - Liga: {row.get('Liga', 'Unknown')}
+                                        - SpielplanID: {row.get('SpielplanID', 'Unknown')}
+                                        """)
+
+                                        try:
+                                            details = self.basketball_client.fetch_game_details(
+                                                row['SpielplanID'],
+                                                row['Liga_ID']
+                                            )
+                                            if details:
+                                                # Add hall information
+                                                details['hall_name'] = row.get('Halle', 'Unknown')
+                                                
+                                                # Get location info
+                                                hall_address, distance = self.google_maps_client.get_location_info(
+                                                    row.get('Gast', ''),
+                                                    row.get('Halle', '')
+                                                )
+                                                details['hall_address'] = hall_address
+                                                details['distance'] = distance
+                                                
+                                                game_data.append(details)
+                                        except Exception as e:
+                                            logger.error(f"Error fetching game details: {e}")
+                                            st.error(f"Fehler beim Laden der Spieldetails: {str(e)}")
+                                            continue
+
+                                    # Final progress update
+                                    progress_bar.progress(1.0)
+                                    
+                                    # Clear progress indicators
+                                    time.sleep(0.5)
+                                    progress_container.empty()
+
+                                if game_data:
+                                    st.session_state.match_details = pd.DataFrame(game_data)
+                                    st.success(f"✅ {len(game_data)} Spiele gefunden!")
+                                    SessionState.update_progress(3)
+                                    
+                                    # Show preview of loaded data
+                                    with st.expander("📊 Vorschau der geladenen Spiele", expanded=False):
+                                        st.dataframe(
+                                            st.session_state.match_details[
+                                                ['Spielplan_ID', 'Liga_ID', 'Date', 
+                                                 'Home Team', 'Away Team']
+                                            ]
+                                        )
+                                else:
+                                    st.error("❌ Keine Spieldetails gefunden.")
+                        else:
+                            st.warning("⚠️ Keine passenden Spiele gefunden.")
+        else:
+            st.error("❌ Keine Liga-Daten vorhanden. Bitte führen Sie Schritt 1 aus.")
+
+    def _render_step_4(self):
+        """Render Step 4: Generate PDFs."""
+        st.header("4️⃣ PDFs erzeugen")
+        
+        if st.button("PDFs generieren"):
+            match_details = st.session_state.match_details
+            
+            if match_details is None or match_details.empty:
+                st.error("❌ Keine Spieldaten vorhanden.")
+                return
+
+            # Build birthday lookup
+            birthday_lookup = DataProcessor.build_birthday_lookup(
+                st.session_state.player_birthdays_df
+            )
+
+            # Get settings
+            club_name = st.session_state.pdf_club_name
+            event_type = st.session_state.art_der_veranstaltung
+
+            with st.spinner("Generiere PDFs..."):
+                total_games = len(match_details)
+                progress_container = st.container()
+                pdf_infos = []
+                
+                with progress_container:
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    start_time = time.time()
+                    
+                    for idx, row in match_details.iterrows():
+                        # Calculate progress and estimated time
+                        progress = idx / total_games
+                        progress_bar.progress(progress)
+                        
+                        elapsed_time = time.time() - start_time
+                        if idx > 0:
+                            time_per_item = elapsed_time / idx
+                            remaining_items = total_games - idx
+                            remaining_time = time_per_item * remaining_items
+                            time_text = format_time_remaining(remaining_time)
+                        else:
+                            time_text = "Berechne..."
+
+                        status_text.markdown(f"""
+                        **Generiere PDF {idx + 1}/{total_games}**
+                        Geschätzte Restzeit: {time_text}
+                        Liga: {row.get('Liga_ID', 'Unknown')}
+                        Spiel: {row.get('Spielplan_ID', 'Unknown')}
+                        """)
+
+                        # Create Liga object
+                        liga_info = DataProcessor.create_liga(
+                            st.session_state.liga_df[
+                                st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
+                            ].iloc[0]
+                        )
+
+                        # Generate PDF
+                        pdf_info = self.pdf_generator.generate_pdf(
+                            game_details=row,
+                            liga_info=liga_info,
+                            club_name=club_name,
+                            event_type=event_type,
+                            birthday_lookup=birthday_lookup
+                        )
+                        
+                        if pdf_info:
+                            pdf_infos.append(pdf_info)
+
+                    # Final progress update
+                    progress_bar.progress(1.0)
+                    
+                    # Clear progress indicators
+                    time.sleep(0.5)
+                    progress_container.empty()
+
+                if pdf_infos:
+                    st.success(f"✅ {len(pdf_infos)} PDFs erstellt!")
+                    st.session_state.generated_pdfs_info = pdf_infos
+                    
+                    # Analyze PDFs
+                    analysis = self.pdf_analyzer.analyze_pdfs(pdf_infos)
+                    
+                    # Show analysis results
+                    self.ui.render_analysis_results(analysis)
+                    
+                    # Show download links
+                    st.subheader("📥 PDFs herunterladen")
+                    for pdf_info in pdf_infos:
+                        filename = os.path.basename(pdf_info.filepath)
+                        with open(pdf_info.filepath, "rb") as file:
+                            st.download_button(
+                                label=f"📄 {filename}",
+                                data=file,
+                                file_name=filename,
+                                mime="application/pdf"
+                            )
+                    
+                    SessionState.update_progress(4)
+                else:
+                    st.error("❌ Keine PDFs konnten erstellt werden.")
