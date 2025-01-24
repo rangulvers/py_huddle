@@ -18253,3 +18253,394 @@ AttributeError: module 'streamlit' has no attribute 'experimental_rerun'
 2025-01-24 09:57:56.554 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
 2025-01-24 09:57:56.554 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
 2025-01-24 09:57:56.554 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.531 | DEBUG    | src.data.processing:filter_relevant_games:47 - Filtering games with parameters:
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.533 | DEBUG    | src.data.processing:filter_relevant_games:48 - Selected Liga IDs: ['43963']
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.534 | DEBUG    | src.data.processing:filter_relevant_games:49 - Club name: TV Heppenheim
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.535 | DEBUG    | src.data.processing:filter_relevant_games:50 - Input DataFrame shape: (152, 9)
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:54 - Games matching Liga_ID filter: 16
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.536 | DEBUG    | src.data.processing:filter_relevant_games:58 - Games matching club name filter: 76
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.537 | DEBUG    | src.data.processing:filter_relevant_games:62 - Final filtered DataFrame shape: (8, 9)
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:08.538 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630884, liga_id=43963
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.087 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630884&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.090 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630891, liga_id=43963
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.138 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630891&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.140 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630901, liga_id=43963
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.184 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630901&liga_id=43963&defaultview=1
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:12.186 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630908, liga_id=43963
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.734 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630908&liga_id=43963&defaultview=1
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:15.739 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630918, liga_id=43963
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.292 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630918&liga_id=43963&defaultview=1
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:19.297 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630926, liga_id=43963
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.847 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630926&liga_id=43963&defaultview=1
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:22.851 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630934, liga_id=43963
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.402 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630934&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.407 | DEBUG    | src.api.basketball:fetch_game_details:57 - Fetching game details: spielplan_id=2630950, liga_id=43963
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1
+2025-01-24 10:01:26.460 | ERROR    | src.api.basketball:fetch_game_details:67 - Network error fetching game details: 503 Server Error: Backend fetch failed for url: https://www.basketball-bund.net/public/ergebnisDetails.jsp?type=1&spielplan_id=2630950&liga_id=43963&defaultview=1

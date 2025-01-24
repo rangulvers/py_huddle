@@ -28,7 +28,9 @@ class MainPage:
     def render(self):
         """Render the main page."""
         st.title("🏀 Basketball Reisekosten Generator")
-        
+        # Show debug panel if in debug mode
+        if "debug_manager" in st.session_state:
+            st.session_state.debug_manager.render_debug_sidebar()
         # Initialize session state
         SessionState.init_state()
         

@@ -7,40 +7,50 @@ import streamlit as st
 from src.config import BASKETBALL_CONFIG, ERROR_MESSAGES
 
 class BasketballClient:
-    """Client for interacting with basketball-bund.net."""
-    
     def __init__(self):
         self.base_url = BASKETBALL_CONFIG["base_url"]
         self.verband = BASKETBALL_CONFIG["verband"]
+        self.debug = "debug_manager" in st.session_state
 
     def fetch_liga_data(self, club_name: str) -> pd.DataFrame:
-        """
-        Fetch league data for a club.
-        
-        Args:
-            club_name: Name of the basketball club
-            
-        Returns:
-            DataFrame with league information
-        """
+        """Fetch league data for a club."""
         logger.debug(f"Fetching liga data for club: {club_name}")
         
         url = f"{self.base_url}/index.jsp?Action=100&Verband={self.verband}"
         payload = self._build_liga_search_payload(club_name)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        logger.debug(f"Request URL: {url}")
+
         try:
+            if self.debug:
+                st.session_state.debug_manager.log_request(
+                    url=url,
+                    method="POST",
+                    headers=headers,
+                    data=payload
+                )
+
             response = requests.post(url, headers=headers, data=payload)
+            
+            if self.debug:
+                st.session_state.debug_manager.log_response(
+                    response,
+                    "Liga Data Fetch"
+                )
+
             response.raise_for_status()
-            return self._parse_liga_data(response.text)
+            df = self._parse_liga_data(response.text)
+            
+            if self.debug:
+                st.session_state.debug_manager.log_data_processing(
+                    "Parsed Liga Data",
+                    df
+                )
+            
+            return df
             
         except requests.exceptions.RequestException as e:
             logger.error(f"Network error fetching liga data: {e}")
             st.error(ERROR_MESSAGES["network_error"].format(error=str(e)))
-            return pd.DataFrame()
-        except Exception as e:
-            logger.exception(f"Unexpected error fetching liga data: {e}")
-            st.error(ERROR_MESSAGES["unexpected_error"].format(error=str(e)))
             return pd.DataFrame()
 
     def fetch_game_details(self, spielplan_id: str, liga_id: str) -> Optional[Dict]:
