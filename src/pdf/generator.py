@@ -1,3 +1,4 @@
+from math import ceil
 import os
 from typing import Dict, Optional, List
 from datetime import datetime
@@ -5,6 +6,8 @@ from pdfrw import PdfReader, PdfWriter, PdfDict
 from loguru import logger
 from src.config import PDF_CONFIG, PDF_FIELD_MAPPINGS
 from src.data.models import PDFInfo, Liga
+from src.api.google_maps import GoogleMapsClient, GoogleMapsAPIError
+import streamlit as st  # Add this import
 
 class PDFGenerator:
     """Generate PDF documents from template."""
@@ -14,10 +17,10 @@ class PDFGenerator:
         self.template_path = PDF_CONFIG["template_path"]
         self.output_dir = PDF_CONFIG["output_dir"]
         self.max_players = PDF_CONFIG["max_players"]
+        self.google_maps_client = GoogleMapsClient()  # Add this line
 
         # Ensure output directory exists
         os.makedirs(self.output_dir, exist_ok=True)
-
     def generate_pdf(
         self,
         game_details: Dict,
@@ -59,17 +62,44 @@ class PDFGenerator:
             logger.debug(f"Home team: {home_team}")
             logger.debug(f"Home hall: {home_hall}")
 
-            # Get the location information
-            location = f"{home_team} - {home_hall}" if home_team and home_hall else "Unknown"
-            data["(Name oder SpielortRow1)"] = location
-
-            if game_details.get('distance'):
-                data["(km  Hin und Rückfahrt Row1)"] = f"{game_details['distance']:.1f}"
+            try:
+                # Try to get location information using Google Maps
+                formatted_address, location_details = self.google_maps_client.get_gym_location(
+                    home_team, 
+                    home_hall
+                )
+                
+                if formatted_address:
+                    try:
+                        # Calculate distance from our home gym
+                        home_gym_address = PDF_CONFIG.get("home_gym_address")
+                        distance = self.google_maps_client.calculate_distance(
+                            home_gym_address,
+                            formatted_address
+                        )
+                        
+                        data["(Name oder SpielortRow1)"] = formatted_address
+                        if distance is not None:
+                            round_trip_distance = ceil(distance * 2)
+                            data["(km  Hin und Rückfahrt Row1)"] = f"{round_trip_distance}"
+                            data["(Summe km)"] = f"{round_trip_distance * 5}"
+                            logger.debug(f"Set round-trip distance: {round_trip_distance} km")
+                    except Exception as e:
+                        logger.error(f"Error calculating distance: {e}")
+                        data["(Name oder SpielortRow1)"] = formatted_address
+                else:
+                    # Fallback: Use basic location information
+                    logger.warning(f"Using fallback location for {home_team} - {home_hall}")
+                    data["(Name oder SpielortRow1)"] = f"{home_team} - {home_hall}"
+                    
+            except Exception as e:
+                logger.error(f"Error with location lookup: {e}")
+                # Fallback: Use basic location information
+                data["(Name oder SpielortRow1)"] = f"{home_team} - {home_hall}"
 
             logger.debug("Added game information to row 1")
             logger.debug(f"Date: {date}")
-            logger.debug(f"Away game location: {data['(Name oder SpielortRow1)']}")
-            logger.debug(f"Travel distance: {data.get('(km  Hin und Rückfahrt Row1)', 'Not set')}")
+            logger.debug(f"Location: {data['(Name oder SpielortRow1)']}")
 
             # Process players starting from row 2
             players = game_details.get('Players', [])
@@ -77,7 +107,7 @@ class PDFGenerator:
             has_unknown_birthdays = False
             
             # Maximum 5 players, using rows 2-6
-            for idx, player in enumerate(players[:5], start=2):  # Start from row 2
+            for idx, player in enumerate(players[:5], start=2):
                 try:
                     if player.get('is_masked', False):
                         name_text = "Geblocked durch DSGVO"
@@ -93,21 +123,19 @@ class PDFGenerator:
                         birthday_text = birthday
                     
                     # Add name to Name oder Spielort field
-                    data[f"(Name oder SpielortRow{idx})"] = name_text
+                    data[f"(Name oder SpielortRow{idx})"] = name_text + " " # stupid hack to prevent text clipping
                     # Add birthday to Einzelteilngeb field
                     data[f"(EinzelteilngebRow{idx})"] = birthday_text
+                    data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
                     
                     logger.debug(f"Added to row {idx}:")
                     logger.debug(f"  Name: {name_text}")
                     logger.debug(f"  Birthday: {birthday_text}")
+                    logger.debug(f"  Distance: {round_trip_distance}")
                     
                 except Exception as e:
                     logger.error(f"Error processing player for row {idx}: {e}")
                     continue
-
-            logger.debug("Prepared form data:")
-            for key, value in data.items():
-                logger.debug(f"Field: {key} = {value}")
 
             # Fill form fields
             field_update_count = 0
@@ -136,12 +164,6 @@ class PDFGenerator:
             writer.write(filepath, template)
             logger.debug(f"Saved PDF to: {filepath}")
 
-            # Verify file was created and has content
-            if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
-                logger.debug(f"Successfully created PDF: {filepath} ({os.path.getsize(filepath)} bytes)")
-            else:
-                logger.error(f"PDF file is empty or not created: {filepath}")
-
             return PDFInfo(
                 filepath=filepath,
                 liga_id=liga_id,
@@ -153,5 +175,5 @@ class PDFGenerator:
             )
 
         except Exception as e:
-            logger.error(f"Error generating PDF: {e}", exc_info=True)
+            logger.error(f"Error generating PDF: {e}")
             return None

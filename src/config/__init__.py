@@ -7,7 +7,7 @@ load_dotenv()
 
 
 # Default configuration values
-HOME_GYM_ADDRESS = "Weiherhausstraße 8c, 64646 Heppenheim"
+HOME_GYM_ADDRESS = "Am Stadion 2, 64646 Heppenheim (Bergstraße)"
 
 # Basketball-bund.net configuration
 BASKETBALL_CONFIG = {
@@ -37,11 +37,11 @@ ERROR_MESSAGES = {
     "api_error": "API-Fehler: {error}"
 }
 
-# PDF configuration
 PDF_CONFIG = {
     "template_path": "templates/01_fahrtkostenzuschsseeinzelblatt neu_V2beschreibbar.pdf",
     "output_dir": "output/pdfs",
-    "max_players": 5
+    "max_players": 5,
+    "home_gym_address": "Am Stadion 2, 64646 Heppenheim (Bergstraße)"
 }
 
 # Application states

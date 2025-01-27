@@ -1,3 +1,5 @@
+import io
+import zipfile
 import streamlit as st
 import pandas as pd
 import time
@@ -234,7 +236,7 @@ class MainPage:
                                                 details['hall_name'] = row.get('Halle', 'Unknown')
                                                 
                                                 # Get location info
-                                                hall_address, distance = self.google_maps_client.get_location_info(
+                                                hall_address, distance = self.google_maps_client.get_gym_location(
                                                     row.get('Gast', ''),
                                                     row.get('Halle', '')
                                                 )
@@ -273,91 +275,219 @@ class MainPage:
                             st.warning("⚠️ Keine passenden Spiele gefunden.")
         else:
             st.error("❌ Keine Liga-Daten vorhanden. Bitte führen Sie Schritt 1 aus.")
-
     def _render_step_4(self):
         """Render Step 4: Generate PDFs."""
         st.header("4️⃣ PDFs erzeugen")
         
-        if st.button("PDFs generieren"):
-            match_details = st.session_state.match_details
-            
-            if match_details is None or match_details.empty:
-                st.error("❌ Keine Spieldaten vorhanden.")
-                return
+        # Initialize PDF storage in session state if not exists
+        if 'generated_pdfs' not in st.session_state:
+            st.session_state.generated_pdfs = []
 
-            logger.debug("Starting PDF generation process")
-            logger.debug(f"Match details shape: {match_details.shape}")
-            logger.debug(f"Columns available: {match_details.columns}")
-
-            # Build birthday lookup
-            birthday_lookup = DataProcessor.build_birthday_lookup(
-                st.session_state.player_birthdays_df
-            )
-            logger.debug(f"Built birthday lookup with {len(birthday_lookup)} entries")
-
-            # Get settings
-            club_name = st.session_state.pdf_club_name
-            event_type = st.session_state.art_der_veranstaltung
-            logger.debug(f"Using club_name: {club_name}, event_type: {event_type}")
-
-            with st.spinner("Generiere PDFs..."):
-                total_games = len(match_details)
-                progress_container = st.container()
-                pdf_infos = []
+        # PDF Generation Section
+        with st.container():
+            if st.button("🔄 PDFs generieren", use_container_width=True):
+                match_details = st.session_state.match_details
                 
-                with progress_container:
-                    progress_bar = st.progress(0)
-                    status_text = st.empty()
+                if match_details is None or match_details.empty:
+                    st.error("❌ Keine Spieldaten vorhanden.")
+                    return
+
+                logger.debug("Starting PDF generation process")
+                logger.debug(f"Match details shape: {match_details.shape}")
+                logger.debug(f"Columns available: {match_details.columns}")
+
+                # Clear previous PDFs
+                st.session_state.generated_pdfs = []
+                
+                # Build birthday lookup
+                birthday_lookup = DataProcessor.build_birthday_lookup(
+                    st.session_state.player_birthdays_df
+                )
+                logger.debug(f"Built birthday lookup with {len(birthday_lookup)} entries")
+
+                # Get settings
+                club_name = st.session_state.pdf_club_name
+                event_type = st.session_state.art_der_veranstaltung
+                logger.debug(f"Using club_name: {club_name}, event_type: {event_type}")
+
+                with st.spinner("Generiere PDFs..."):
+                    total_games = len(match_details)
+                    progress_container = st.container()
                     
-                    start_time = time.time()
+                    with progress_container:
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        start_time = time.time()
+                        
+                        for idx, row in match_details.iterrows():
+                            logger.debug(f"Processing game {idx + 1}/{total_games}")
+                            logger.debug(f"Game data: {row.to_dict()}")
+
+                            # Calculate progress and update UI
+                            progress = (idx + 1) / total_games
+                            progress_bar.progress(progress)
+                            
+                            elapsed_time = time.time() - start_time
+                            if idx > 0:
+                                time_per_item = elapsed_time / idx
+                                remaining_items = total_games - idx
+                                remaining_time = time_per_item * remaining_items
+                                time_text = format_time_remaining(remaining_time)
+                            else:
+                                time_text = "Berechne..."
+
+                            status_text.markdown(f"""
+                            **Generiere PDF {idx + 1}/{total_games}**  
+                            Geschätzte Restzeit: {time_text}  
+                            Liga: {row.get('Liga_ID', 'Unknown')}  
+                            Spiel: {row.get('Spielplan_ID', 'Unknown')}
+                            """)
+
+                            # Get Liga info
+                            liga_df_filtered = st.session_state.liga_df[
+                                st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
+                            ]
+                            
+                            if liga_df_filtered.empty:
+                                logger.warning(f"No Liga info found for Liga_ID: {row['Liga_ID']}")
+                                continue
+
+                            liga_info = DataProcessor.create_liga(liga_df_filtered.iloc[0])
+                            logger.debug(f"Created Liga info: {liga_info}")
+
+                            # Generate PDF
+                            pdf_info = self.pdf_generator.generate_pdf(
+                                game_details=row,
+                                liga_info=liga_info,
+                                club_name=club_name,
+                                event_type=event_type,
+                                birthday_lookup=birthday_lookup
+                            )
+                            
+                            if pdf_info:
+                                st.session_state.generated_pdfs.append(pdf_info)
+                                logger.debug(f"Successfully generated PDF: {pdf_info.filepath}")
+                            else:
+                                logger.error(f"Failed to generate PDF for game {idx + 1}")
+
+        # Results Section (only show if PDFs were generated)
+        if st.session_state.generated_pdfs:
+            st.write("---")
+            
+            # Summary Tabs
+            tab1, tab2, tab3 = st.tabs(["📊 Übersicht", "📥 Download", "ℹ️ Details"])
+            
+            with tab1:
+                # Statistics Row
+                stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
+                
+                total_pdfs = len(st.session_state.generated_pdfs)
+                complete_pdfs = sum(1 for d in st.session_state.generated_pdfs if not d.has_unknown_birthdays and d.distance)
+                incomplete_pdfs = total_pdfs - complete_pdfs
+
+                # Calculate total distance (safely)
+                total_distance = 0
+                for pdf in st.session_state.generated_pdfs:
+                    try:
+                        if isinstance(pdf.distance, (int, float)):
+                            total_distance += float(pdf.distance) * 2
+                        elif isinstance(pdf.distance, str):
+                            total_distance += float(pdf.distance.replace(',', '.')) * 2
+                    except (ValueError, AttributeError, TypeError) as e:
+                        logger.debug(f"Could not process distance for PDF: {e}")
+                        continue
+
+                with stat_col1:
+                    st.metric("Generierte PDFs", total_pdfs)
+                with stat_col2:
+                    st.metric("Vollständig", complete_pdfs)
+                with stat_col3:
+                    st.metric("Unvollständig", incomplete_pdfs)
+                with stat_col4:
+                    if total_distance > 0:
+                        st.metric("Gesamtkilometer", f"{total_distance:.1f} km")
+
+                # Summary Table
+                st.write("### Detaillierte Übersicht")
+                
+                # Create summary data
+                summary_data = []
+                for pdf_info in st.session_state.generated_pdfs:
+                    missing = []
+                    if pdf_info.has_unknown_birthdays:
+                        missing.append("Geburtsdaten")
+                    if not pdf_info.distance:
+                        missing.append("Entfernung")
                     
-                    for idx, row in match_details.iterrows():
-                        logger.debug(f"Processing game {idx + 1}/{total_games}")
-                        logger.debug(f"Game data: {row.to_dict()}")
+                    summary_data.append([
+                        "⚠️" if missing else "✅",
+                        pdf_info.team,
+                        pdf_info.date,
+                        ", ".join(missing) if missing else "Keine"
+                    ])
 
-                        # Calculate progress and update UI
-                        progress = idx / total_games
-                        progress_bar.progress(progress)
-                        
-                        elapsed_time = time.time() - start_time
-                        if idx > 0:
-                            time_per_item = elapsed_time / idx
-                            remaining_items = total_games - idx
-                            remaining_time = time_per_item * remaining_items
-                            time_text = format_time_remaining(remaining_time)
-                        else:
-                            time_text = "Berechne..."
+                # Display as dataframe
+                df = pd.DataFrame(
+                    summary_data,
+                    columns=["Status", "Liga", "Datum", "Fehlende Daten"]
+                )
+                st.dataframe(df, use_container_width=True)
 
-                        status_text.markdown(f"""
-                        **Generiere PDF {idx + 1}/{total_games}**
-                        Geschätzte Restzeit: {time_text}
-                        Liga: {row.get('Liga_ID', 'Unknown')}
-                        Spiel: {row.get('Spielplan_ID', 'Unknown')}
-                        """)
+            with tab2:
+                download_col1, download_col2 = st.columns([2, 1])
+                
+                with download_col1:
+                    st.write("### Einzelne PDFs")
+                    for pdf_info in st.session_state.generated_pdfs:
+                        try:
+                            with open(pdf_info.filepath, 'rb') as pdf_file:
+                                pdf_data = pdf_file.read()
+                            
+                            filename = os.path.basename(pdf_info.filepath)
+                            st.download_button(
+                                label=f"📄 {pdf_info.team} - {pdf_info.date}",
+                                data=pdf_data,
+                                file_name=filename,
+                                mime="application/pdf",
+                                key=f"download_{pdf_info.liga_id}_{pdf_info.date}",
+                                use_container_width=True
+                            )
+                        except Exception as e:
+                            logger.error(f"Error creating download button: {e}")
+                            st.error(f"Fehler beim Laden von {filename}")
 
-                        # Get Liga info
-                        liga_df_filtered = st.session_state.liga_df[
-                            st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
-                        ]
-                        
-                        if liga_df_filtered.empty:
-                            logger.warning(f"No Liga info found for Liga_ID: {row['Liga_ID']}")
-                            continue
+                with download_col2:
+                    st.write("### Alle PDFs")
+                    if len(st.session_state.generated_pdfs) > 1:
+                        try:
+                            zip_buffer = io.BytesIO()
+                            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                                for pdf_info in st.session_state.generated_pdfs:
+                                    if os.path.exists(pdf_info.filepath):
+                                        zip_file.write(
+                                            pdf_info.filepath, 
+                                            os.path.basename(pdf_info.filepath)
+                                        )
+                            
+                            st.download_button(
+                                label="📦 Als ZIP herunterladen",
+                                data=zip_buffer.getvalue(),
+                                file_name="reisekosten_pdfs.zip",
+                                mime="application/zip",
+                                key="download_all_pdfs",
+                                use_container_width=True
+                            )
+                        except Exception as e:
+                            logger.error(f"Error creating ZIP: {e}")
+                            st.error("Fehler beim Erstellen der ZIP-Datei")
 
-                        liga_info = DataProcessor.create_liga(liga_df_filtered.iloc[0])
-                        logger.debug(f"Created Liga info: {liga_info}")
-
-                        # Generate PDF
-                        pdf_info = self.pdf_generator.generate_pdf(
-                            game_details=row,
-                            liga_info=liga_info,
-                            club_name=club_name,
-                            event_type=event_type,
-                            birthday_lookup=birthday_lookup
-                        )
-                        
-                        if pdf_info:
-                            pdf_infos.append(pdf_info)
-                            logger.debug(f"Successfully generated PDF: {pdf_info.filepath}")
-                        else:
-                            logger.error(f"Failed to generate PDF for game {idx + 1}")
+            with tab3:
+                st.write("### Status-Erklärung")
+                st.write("✅ - Alle Daten vollständig")
+                st.write("⚠️ - Fehlende Daten (siehe Spalte 'Fehlende Daten')")
+                
+                if any(pdf.has_unknown_birthdays for pdf in st.session_state.generated_pdfs):
+                    st.warning("⚠️ Es fehlen Geburtsdaten für einige Spieler")
+                if any(not pdf.distance for pdf in st.session_state.generated_pdfs):
+                    st.warning("⚠️ Es fehlen Entfernungsangaben für einige Spiele")
