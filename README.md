@@ -11,6 +11,9 @@ A Streamlit application to automate the generation of travel expense PDFs for ba
 - 📈 Comprehensive analysis of generated PDFs
 - 🔍 Validation checks for birthdays and travel distances
 
+  ![image](https://github.com/user-attachments/assets/415d3fc3-7797-4303-a6a6-bb8d59ee6b3a)
+
+
 ## Prerequisites
 
 - Python 3.11 or higher
