@@ -38,12 +38,14 @@ class PDFGenerator:
             liga_id = liga_info.liga_id if liga_info else 'Unknown'
             
             # Create filename
-            filename = f"{liga_id}_{date}.pdf"
+            filename = f"{liga_id}_{date}_{liga_info.liganame}.pdf"
             filepath = os.path.join(self.output_dir, filename)
             
             # Read template
             template = PdfReader(self.template_path)
             
+            
+            logger.debug(liga_info)
             # Basic form fields
             data = {
                 "(Verein)": club_name,
@@ -190,20 +192,26 @@ class PDFGenerator:
             logger.debug(f"Starting archive PDF generation for league: {league_info['name']}")
             
             # Create filename
-            filename = f"archive_{league_info['liga_id']}_{league_info['season_id']}.pdf"
+            filename = f"archive_{league_info['liga_id']}_{league_info['season_id']}_{league_info['name']}.pdf"
             filepath = os.path.join(self.output_dir, filename)
             
             # Read template
             template = PdfReader(self.template_path)
+            
+            if league_info['bereich'] == "männlich":
+                league_info['gender_short'] = "M"
+            elif league_info['bereich'] == "weiblich":
+                league_info['gender_short']  = "W"
+            
+            logger.debug(league_info)
             
             # Basic form fields
             data = {
                 "(Verein)": club_name,
                 "(Art der Veranstaltung)": event_type,
                 "(Abteilung)": "Basketball",
-                "(Mannschaften)": f"{league_info['name']} {league_info['season_id']}/{int(league_info['season_id'])+1}"
+                "(Mannschaften)": f"{league_info['gender_short']}{league_info['name']} {league_info['season_id']}/{int(league_info['season_id'])+1}"
             }
-            
 
             total_distance = 0
             games_processed = 0
@@ -226,18 +234,19 @@ class PDFGenerator:
                             try:
                                 # SKIP FOR ARCHIVE AS DATA IS NOT AVAILABLE
                                 # # Calculate distance from our home gym
-                                # home_gym_address = PDF_CONFIG.get("home_gym_address")
-                                # distance = self.google_maps_client.calculate_distance(
-                                #     home_gym_address,
-                                #     formatted_address
-                                # )
+                                home_gym_address = PDF_CONFIG.get("home_gym_address")
+                                distance = self.google_maps_client.calculate_distance(
+                                    home_gym_address,
+                                    formatted_address
+                                )
                                 
-                                data[f"(Name oder SpielortRow{idx})"] = formatted_address
-                                # if distance is not None:
-                                #     round_trip_distance = ceil(distance * 2)
-                                #     data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
-                                #     total_distance += round_trip_distance
-                                #     logger.debug(f"Set round-trip distance: {round_trip_distance} km")
+                                data[f"(Name oder SpielortRow{idx})"] = f" {formatted_address} ({home_team}) "
+                                logger.debug(f"Set location: {formatted_address}")
+                                if distance is not None:
+                                    round_trip_distance = ceil(distance * 2)
+                                    data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
+                                    total_distance += round_trip_distance
+                                    logger.debug(f"Set round-trip distance: {round_trip_distance} km")
                             except Exception as e:
                                 logger.error(f"Error calculating distance: {e}")
                                 data[f"(Name oder SpielortRow{idx})"] = formatted_address

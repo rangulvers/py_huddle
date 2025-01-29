@@ -33,7 +33,7 @@ class GoogleMapsClient:
             hall_name: Name of the hall
         """
         try:
-            if not team_name or not hall_name:
+            if not team_name:
                 raise ValueError("Team name and hall name are required")
 
             # Create a simple, direct search query just like typing in Google Maps
