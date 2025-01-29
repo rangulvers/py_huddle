@@ -7,7 +7,8 @@ import os
 from datetime import datetime
 from typing import List, Dict, Any
 from loguru import logger
-
+import dotenv
+from src.api.archive import BasketballArchive, ArchiveFilter
 from src.ui.components import UIComponents, format_time_remaining
 from src.ui.state import SessionState
 from src.api.basketball import BasketballClient
@@ -15,6 +16,8 @@ from src.api.google_maps import GoogleMapsClient
 from src.data.processing import DataProcessor
 from src.pdf.generator import PDFGenerator
 from src.pdf.analyzer import PDFAnalyzer
+from src.auth.login import LoginCredentials
+from src.auth.login import BBAuthenticator
 
 class MainPage:
     """Main page of the application."""
@@ -26,9 +29,9 @@ class MainPage:
         self.pdf_generator = PDFGenerator()
         self.pdf_analyzer = PDFAnalyzer()
         self.ui = UIComponents()
-
-    def render(self):
-        """Render the main page."""
+        
+    def render_current_season(self):
+        """Render the current season functionality."""
         st.title("🏀 Basketball Reisekosten Generator")
         # Show debug panel if in debug mode
         if "debug_manager" in st.session_state:
@@ -48,6 +51,179 @@ class MainPage:
         if st.session_state.step_3_done:
             self._render_step_4()
 
+    def render_login_section(self):
+            """Render the login section."""
+            st.header("🔐 Login")
+            
+            with st.form("login_form"):
+                st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
+                dotenv.load_dotenv()
+                
+
+                username = st.text_input("Benutzername", value=os.getenv("BASKETBALL_BUND_USERNAME"))
+                password = st.text_input("Passwort", type="password", value=os.getenv("BASKETBALL_BUND_PASSWORD"))
+                
+                submitted = st.form_submit_button("Anmelden")
+                
+                if submitted:
+                    if username and password:
+                        credentials = LoginCredentials(username=username, password=password)
+                        success, error = st.session_state.authenticator.login(credentials)
+                        
+                        if success:
+                            st.session_state.is_logged_in = True
+                            st.success("✅ Erfolgreich angemeldet!")
+                            
+                        else:
+                            st.error(f"❌ Anmeldung fehlgeschlagen: {error}")
+                    else:
+                        st.error("❌ Bitte Benutzername und Passwort eingeben!")
+
+    def render(self):
+        """Render the main page."""
+        self.render_current_season()
+
+
+    def _render_login_section(self):
+        """Render the login section."""
+        st.header("🔐 Login")
+        
+        # Initialize session state for login
+        if 'is_logged_in' not in st.session_state:
+            st.session_state.is_logged_in = False
+        if 'authenticator' not in st.session_state:
+            st.session_state.authenticator = BBAuthenticator()
+
+        # Show login form if not logged in
+        if not st.session_state.is_logged_in:
+            with st.form("login_form"):
+                st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
+                username = st.text_input("Benutzername")
+                password = st.text_input("Passwort", type="password")
+                
+                submitted = st.form_submit_button("Anmelden")
+                
+                if submitted:
+                    if username and password:
+                        credentials = LoginCredentials(username=username, password=password)
+                        success, error = st.session_state.authenticator.login(credentials)
+                        
+                        if success:
+                            st.session_state.is_logged_in = True
+                            st.success("✅ Erfolgreich angemeldet!")
+                            st.rerun()
+                        else:
+                            st.error(f"❌ Anmeldung fehlgeschlagen: {error}")
+                    else:
+                        st.error("❌ Bitte Benutzername und Passwort eingeben!")
+        else:
+            st.success("✅ Sie sind angemeldet")
+            if st.button("Abmelden"):
+                st.session_state.is_logged_in = False
+                st.session_state.authenticator = BBAuthenticator()
+                st.rerun()
+  
+    def render_archive_section(self):
+        """Render the archive section."""
+        st.header("📚 Archiv")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            current_season = 2023
+            season_options = range(current_season, current_season - 5, -1)
+            selected_season = st.selectbox(
+                "Saison",
+                options=season_options,
+                format_func=lambda x: f"{x}/{x+1}"
+            )
+
+        with col2:
+            team_name = st.text_input(
+                "Team Name",
+                help="Geben Sie den Namen des Teams ein"
+            )
+
+        if st.button("Suchen", use_container_width=True):
+            if not team_name:
+                st.warning("Bitte geben Sie einen Team Namen ein")
+                return
+
+            try:
+                with st.spinner("Suche Spiele..."):
+                    filter_params = ArchiveFilter(
+                        season_id=str(selected_season),
+                        team_name=team_name
+                    )
+                    
+                    archive_client = BasketballArchive(st.session_state.authenticator)
+                    leagues = archive_client.find_team_leagues(filter_params)
+                    
+                    if leagues:
+                        st.success(f"✅ Team in {len(leagues)} Liga(en) gefunden")
+                        
+                        # Create tabs for each league
+                        tabs = st.tabs([league['name'] for league in leagues])
+                        
+                        for tab, league in zip(tabs, leagues):
+                            with tab:
+                                # Show league information
+                                st.subheader("Liga Information")
+                                st.write(f"Spielklasse: {league['spielklasse']}")
+                                st.write(f"Altersklasse: {league['altersklasse']}")
+                                
+                                # Show away games
+                                st.subheader("Auswärtsspiele")
+                                if league['away_games']:
+                                    df = pd.DataFrame(league['away_games'])
+                                    st.dataframe(df, use_container_width=True)
+                                    
+                                    # Generate PDF for this league
+                                    try:
+                                        pdf_info = self.pdf_generator.generate_archive_pdf(
+                                            league_info=league,
+                                            away_games=league['away_games'],
+                                            club_name=team_name,
+                                            event_type = st.session_state.art_der_veranstaltung
+                                        )
+                                        
+                                        if pdf_info:
+                                            # Store PDF in session state to prevent regeneration
+                                            key = f"pdf_{league['liga_id']}"
+                                            if key not in st.session_state:
+                                                with open(pdf_info.filepath, 'rb') as pdf_file:
+                                                    st.session_state[key] = pdf_file.read()
+                                            
+                                            # Add download button
+                                            st.download_button(
+                                                label="PDF herunterladen",
+                                                data=st.session_state[key],
+                                                file_name=os.path.basename(pdf_info.filepath),
+                                                mime="application/pdf",
+                                                use_container_width=True
+                                            )
+                                            
+                                            # Show summary
+                                            st.info(f"""
+                                            📊 Zusammenfassung:
+                                            - Gefundene Spiele: {len(league['away_games'])}
+                                            - Gesamtentfernung: {pdf_info.distance if pdf_info.distance else 'Nicht verfügbar'} km
+                                            """)
+                                        else:
+                                            st.error("Fehler beim Generieren des PDFs")
+                                            
+                                    except Exception as e:
+                                        logger.error(f"Error generating PDF: {e}")
+                                        st.error("Fehler beim Generieren des PDFs")
+                                else:
+                                    st.info("Keine Auswärtsspiele gefunden")
+                    else:
+                        st.warning(f"Keine Liga mit Team '{team_name}' gefunden")
+                    
+            except Exception as e:
+                logger.error(f"Error in archive section: {e}")
+                st.error("Fehler bei der Suche")
+            
     def _render_step_1(self):
         """Render Step 1: Fetch Liga Data."""
         st.header("1️⃣ Liga-Daten abrufen")
