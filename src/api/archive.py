@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 import time
 import re
-
+import streamlit as st
 import pandas as pd
 
 @dataclass
@@ -84,7 +84,7 @@ class BasketballArchive:
         
         while True:
             logger.debug(f"Fetching league page {page} (startrow={start_row}) for season {season_id}")
-            
+            st.write(f"Fetching league page {page} (startrow={start_row}) for season {season_id}")
             # Get leagues from current page
             leagues, next_start_row = self._get_leagues_page(season_id, start_row)
             all_leagues.extend(leagues)
@@ -100,6 +100,7 @@ class BasketballArchive:
             time.sleep(0.5)
 
         logger.info(f"Found total of {len(all_leagues)} leagues across {page} pages")
+        st.write(f"Found total of {len(all_leagues)} leagues across {page} pages")
         return all_leagues
 
     def _get_leagues_page(self, season_id: str, start_row: int) -> tuple[List[Dict], Optional[int]]:

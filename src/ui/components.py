@@ -1,8 +1,6 @@
-import uuid
-import time
 import pandas as pd
 import streamlit as st
-from typing import List, Dict, Any, Tuple
+from typing import List
 from src.config import REQUIRED_COLUMNS
 from src.data.processing import DataProcessor
 from src.pdf.analyzer import PDFAnalysis
