@@ -7,29 +7,7 @@ from src.ui.pages import MainPage
 from src.ui.state import SessionState
 from src.utils.debugging import DebugManager
 from src.auth.login import BBAuthenticator, LoginCredentials
-
-def setup_logging(debug_mode: bool):
-    """Configure logging based on debug mode."""
-    # Remove any existing handlers
-    logger.remove()
-    
-    # Create logs directory if it doesn't exist
-    os.makedirs("logs", exist_ok=True)
-    
-    # Add console handler with appropriate level
-    log_level = "DEBUG" if debug_mode else "INFO"
-    logger.add(
-        "logs/app.log",
-        rotation="500 MB",
-        retention="10 days",
-        level=log_level,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-    )
-    logger.add(
-        lambda msg: print(msg),
-        level=log_level,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>"
-    )
+from src.utils.logging import setup_logging
 
 def main():
     """Main entry point of the application."""
@@ -47,12 +25,14 @@ def main():
             "--debug" in sys.argv
         )
         
-        # Setup logging
-        setup_logging(debug_mode)
-        logger.info(f"Starting application in {'debug' if debug_mode else 'normal'} mode")
+        # Setup logging only once
+        if 'logging_initialized' not in st.session_state:
+            setup_logging(debug_mode)
+            st.session_state.logging_initialized = True
+            logger.info(f"Starting application in {'debug' if debug_mode else 'normal'} mode")
         
-        # Initialize debug manager if in debug mode
-        if debug_mode:
+        # Initialize debug manager if in debug mode and not already initialized
+        if debug_mode and 'debug_manager' not in st.session_state:
             debug_manager = DebugManager()
             st.session_state.debug_manager = debug_manager
             logger.debug("Debug manager initialized")
@@ -67,6 +47,7 @@ def main():
         
         st.title("Basketball Reisekosten Generator")
 
+        # Rest of your code...
         # Create tabs for current season and archive
         tab1, tab2 = st.tabs(["Aktuelle Saison", "Archiv"])
         
@@ -96,5 +77,7 @@ def main():
         logger.error(f"Unexpected error: {e}", exc_info=True)
         st.error(f"Ein unerwarteter Fehler ist aufgetreten: {str(e)}")
 
+
 if __name__ == "__main__":
-    main()
+    with logger.catch():
+        main()

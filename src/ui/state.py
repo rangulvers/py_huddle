@@ -1,6 +1,6 @@
 import streamlit as st
 from typing import Optional
-from src.config import HOME_GYM_ADDRESS
+from src.config import HOME_GYM_ADDRESS, PDF_CONFIG
 
 class SessionState:
     """Manage Streamlit session state."""
@@ -25,7 +25,7 @@ class SessionState:
             
             # Settings
             "home_gym_address": HOME_GYM_ADDRESS,
-            "pdf_club_name": "Mein Basketball-Verein",
+            "pdf_club_name": PDF_CONFIG.get("pdf_club_name"),
             "art_der_veranstaltung": "Saison",
             
             # File upload flags

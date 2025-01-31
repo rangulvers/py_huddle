@@ -78,7 +78,7 @@ class UIComponents:
             # Club name for PDF
             st.session_state.pdf_club_name = st.text_input(
                 "Vereinsname für PDF:",
-                value=st.session_state.get("pdf_club_name", "Mein Basketball-Verein")
+                value=st.session_state.get("pdf_club_name", "")
             )
             
             # Event type

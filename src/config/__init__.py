@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from loguru import logger
 import os
 
 # Load environment variables from a .env file
@@ -7,20 +6,18 @@ load_dotenv()
 
 
 # Default configuration values
-HOME_GYM_ADDRESS = "Am Stadion 2, 64646 Heppenheim (Bergstraße)"
+HOME_GYM_ADDRESS = os.getenv("HOME_GYM_ADDRESS")
 
 # Basketball-bund.net configuration
 BASKETBALL_CONFIG = {
     "base_url": "https://www.basketball-bund.net",
-    "verband": "6"  # Hessischer Basketball Verband
+    "verband": os.getenv("BASKETBALL_BUND_VERBAND")  # Hessischer Basketball Verband
 }
 
 # Google Maps API configuration
 GOOGLE_MAPS_CONFIG = {
     "api_key": os.getenv("GOOGLE_API_KEY")  # Replace with actual API key
 }
-
-logger.info(f"Google Maps API key: {GOOGLE_MAPS_CONFIG['api_key']}")
 
 # Required columns for data validation
 REQUIRED_COLUMNS = {
@@ -41,7 +38,8 @@ PDF_CONFIG = {
     "template_path": "templates/01_fahrtkostenzuschsseeinzelblatt neu_V2beschreibbar.pdf",
     "output_dir": "output/pdfs",
     "max_players": 5,
-    "home_gym_address": "Am Stadion 2, 64646 Heppenheim (Bergstraße)"
+    "home_gym_address": os.getenv("HOME_GYM_ADDRESS"), 
+    "pdf_club_name": os.getenv("PDF_CLUB_NAME")
 }
 
 # Application states
