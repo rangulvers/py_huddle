@@ -1,6 +1,6 @@
 from math import ceil
 import os
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Tuple
 from datetime import datetime
 from pdfrw import PdfReader, PdfWriter, PdfDict
 from loguru import logger
@@ -83,7 +83,7 @@ class PDFGenerator:
                         data["(Name oder SpielortRow1)"] = formatted_address
                         if distance is not None:
                             round_trip_distance = ceil(distance * 2)
-                            data["(km  Hin und Rückfahrt Row1)"] = f"{round_trip_distance}"
+                            # data["(km  Hin und Rückfahrt Row1)"] = f"{round_trip_distance}"
                             data["(Summe km)"] = f"{round_trip_distance * 5}"
                             logger.debug(f"Set round-trip distance: {round_trip_distance} km")
                     except Exception as e:
@@ -107,7 +107,7 @@ class PDFGenerator:
             players = game_details.get('Players', [])
             logger.debug(f"Processing {len(players)} players")
             has_unknown_birthdays = False
-            
+
             # Maximum 5 players, using rows 2-6
             for idx, player in enumerate(players[:5], start=2):
                 try:
@@ -116,13 +116,11 @@ class PDFGenerator:
                         birthday_text = ""
                     else:
                         name = f"{player['Nachname']}, {player['Vorname']}"
-                        birthday = birthday_lookup.get(name, "")
-                        if not birthday:
+                        birthday_text, found = self._lookup_birthday(player, birthday_lookup)  # Use the new method
+                        if not found:
                             has_unknown_birthdays = True
-                            logger.warning(f"No birthday found for player: {name}")
                         
                         name_text = name
-                        birthday_text = birthday
                     
                     # Add name to Name oder Spielort field
                     data[f"(Name oder SpielortRow{idx})"] = name_text + " " # stupid hack to prevent text clipping
@@ -313,3 +311,45 @@ class PDFGenerator:
         except Exception as e:
             logger.error(f"Error generating archive PDF: {e}")
             return None
+        
+    def _lookup_birthday(self, player: Dict, birthday_lookup: Dict[str, str]) -> Tuple[str, bool]:
+            """
+            Look up birthday for a player, handling middle names.
+            
+            Args:
+                player: Player dictionary with name information
+                birthday_lookup: Birthday lookup dictionary
+                
+            Returns:
+                Tuple of (birthday string, success boolean)
+            """
+            lastname = player['Nachname'].strip()
+            full_firstname = player['Vorname'].strip()
+            
+            # Try exact match first
+            exact_key = f"{lastname}, {full_firstname}"
+            birthday = birthday_lookup.get(exact_key)
+            if birthday:
+                logger.debug(f"Found exact birthday match for {exact_key}")
+                return birthday, True
+            
+            # If no match, try with first part of first name
+            firstname_parts = full_firstname.split()
+            if len(firstname_parts) > 0:
+                first_only_key = f"{lastname}, {firstname_parts[0]}"
+                birthday = birthday_lookup.get(first_only_key)
+                if birthday:
+                    logger.debug(f"Found birthday match using first name only: {first_only_key}")
+                    return birthday, True
+                    
+            # If still no match, try the reverse: look for longer names in lookup
+            # that start with our shorter name
+            search_prefix = f"{lastname}, {firstname_parts[0]}"
+            for lookup_name, birthday in birthday_lookup.items():
+                if lookup_name.startswith(search_prefix):
+                    logger.debug(f"Found birthday match with prefix: {lookup_name}")
+                    return birthday, True
+            
+            logger.warning(f"No birthday found for player: {lastname}, {full_firstname}")
+            logger.debug(f"Available names in lookup: {list(birthday_lookup.keys())}")
+            return "", False

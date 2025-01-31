@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import pandas as pd
 from datetime import datetime
 from loguru import logger
@@ -66,34 +66,54 @@ class DataProcessor:
     @staticmethod
     def build_birthday_lookup(df: pd.DataFrame) -> Dict[str, str]:
         """
-        Build lookup dictionary for player birthdays.
+        Build lookup dictionary for player birthdays with handling for middle names.
         
         Args:
-            df: DataFrame with player information
-            
+            df: DataFrame with player information from Excel
+                
         Returns:
-            Dict mapping 'Lastname, Firstname' to birthday
+            Dict mapping various name formats to birthday
         """
         birthday_lookup = {}
         
         for _, row in df.iterrows():
-            key = f"{row['Nachname']}, {row['Vorname']}"
-            if pd.notna(row.get('Geburtsdatum')):
-                try:
-                    # Handle different date formats
-                    date_str = str(row['Geburtsdatum'])
-                    if isinstance(row['Geburtsdatum'], pd.Timestamp):
-                        birthday_lookup[key] = row['Geburtsdatum'].strftime('%d.%m.%Y')
-                    else:
-                        # Try to parse the date string
-                        date_obj = pd.to_datetime(date_str)
-                        birthday_lookup[key] = date_obj.strftime('%d.%m.%Y')
-                except Exception as e:
-                    logger.warning(f"Could not parse birthday for {key}: {e}")
-                    continue
-                    
+            try:
+                lastname = str(row['Nachname']).strip()
+                firstname = str(row['Vorname']).strip()
+                
+                if pd.notna(row.get('Geburtsdatum')):
+                    try:
+                        # Handle different date formats
+                        date_str = str(row['Geburtsdatum'])
+                        if isinstance(row['Geburtsdatum'], pd.Timestamp):
+                            birthday = row['Geburtsdatum'].strftime('%d.%m.%Y')
+                        else:
+                            date_obj = pd.to_datetime(date_str)
+                            birthday = date_obj.strftime('%d.%m.%Y')
+                            
+                        # Store the basic version (as in Excel)
+                        birthday_lookup[f"{lastname}, {firstname}"] = birthday
+                        
+                        # Also store first name only version for matching against full names
+                        firstname_parts = firstname.split()
+                        if len(firstname_parts) > 0:
+                            # Store version with just first part of first name
+                            birthday_lookup[f"{lastname}, {firstname_parts[0]}"] = birthday
+                            
+                        logger.debug(f"Added birthday for {lastname}, {firstname}")
+                        
+                    except Exception as e:
+                        logger.warning(f"Could not parse birthday for {lastname}, {firstname}: {e}")
+                        continue
+                        
+            except Exception as e:
+                logger.error(f"Error processing row: {e}")
+                continue
+                        
         return birthday_lookup
 
+    
+    
     @staticmethod
     def process_game_details(
         game_data: Dict[str, Any],
