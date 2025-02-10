@@ -124,115 +124,121 @@ class MainPage:
                 st.rerun()
   
     def render_archive_section(self):
-        """Render the archive section."""
+  
+
         st.header("📚 Archiv")
+        # Initialize archive-specific session state variables if not present.
+        if "archive_search_done" not in st.session_state:
+            st.session_state.archive_search_done = False
+        if "archive_matching_leagues" not in st.session_state:
+            st.session_state.archive_matching_leagues = []
         
         col1, col2 = st.columns(2)
         with col1:
             current_season = 2023
             season_options = list(range(current_season, current_season - 5, -1))
-            selected_season = st.selectbox(
-                "Saison",
+            st.session_state.archive_selected_season = st.selectbox(
+                "Saison auswählen:",
                 options=season_options,
-                format_func=lambda x: f"{x}/{x+1}"
+                format_func=lambda x: f"{x}/{x+1}",
+                key="archive_season"
             )
         with col2:
-            team_name = st.text_input(
-                "Team Name",
-                help="Geben Sie den Namen des Teams ein"
+            st.session_state.archive_club_name = st.text_input(
+                "Vereinsname:",
+                help="Geben Sie den Vereinsnamen ein (z. B. TV Heppenheim).",
+                value="TV Heppenheim",
+                key="archive_clubname"
             )
         
-        if st.button("Suchen", use_container_width=True):
-            if not team_name:
-                st.warning("Bitte geben Sie einen Team Namen ein")
+        if st.button("Suche starten", use_container_width=True, key="archive_start"):
+            if not st.session_state.archive_club_name:
+                st.warning("Bitte geben Sie einen Vereinsnamen ein.")
                 return
-            
             try:
                 progress_placeholder = st.empty()
-                with st.spinner("Suche Ligen und Teams..."):
+                with st.spinner("Suche Ligen, in denen der Verein vertreten ist..."):
                     filter_params = ArchiveFilter(
-                        season_id=str(selected_season),
-                        team_name=team_name
+                        season_id=str(st.session_state.archive_selected_season),
+                        team_name=st.session_state.archive_club_name
                     )
                     archive_client = BasketballArchive(st.session_state.authenticator)
-                    leagues = archive_client.find_team_leagues(filter_params, progress_placeholder=progress_placeholder)
+                    matching_leagues = archive_client.find_team_leagues(
+                        filter_params,
+                        progress_placeholder=progress_placeholder
+                    )
                     progress_placeholder.empty()
-                    
-                    if leagues:
-                        st.success(f"✅ In {len(leagues)} Liga(en) wurden passende Teams gefunden.")
-                        # For each league, allow the user to select one or more teams
-                        tabs = st.tabs([league["name"] for league in leagues])
-                        for tab, league in zip(tabs, leagues):
-                            with tab:
-                                st.subheader("Liga Information")
-                                st.write(f"Spielklasse: {league['spielklasse']}")
-                                st.write(f"Altersklasse: {league['altersklasse']}")
-                                
-                                # Display all matching teams for this league
-                                matching_team_names = [team["name"] for team in league.get("found_teams", [])]
-                                st.write(f"**Gefundene Teams ({len(matching_team_names)}):**")
-                                st.write(", ".join(matching_team_names))
-                                
-                                # Let the user select which teams to generate PDFs for
-                                selected_teams = st.multiselect(
-                                    "Wählen Sie die Teams für die PDF-Erzeugung:",
-                                    options=matching_team_names,
-                                    default=matching_team_names
-                                )
-                                
-                                if selected_teams:
-                                    st.subheader("Auswärtsspiele")
-                                    all_selected_games = []
-                                    # For each selected team, call get_away_games (re-run filtering based on the specific team name)
-                                    for team in selected_teams:
-                                        team_away_games = archive_client.get_away_games(league, team)
-                                        if team_away_games:
-                                            st.write(f"**{team}: {len(team_away_games)} Auswärtsspiele gefunden**")
-                                            all_selected_games.extend(team_away_games)
-                                        else:
-                                            st.info(f"Keine Auswärtsspiele für {team} gefunden.")
-                                    
-                                    # Show combined away games
-                                    if all_selected_games:
-                                        df = pd.DataFrame(all_selected_games)
-                                        st.dataframe(df, use_container_width=True)
-                                        
-                                        # Generate PDF for each team selection. This example assumes that your
-                                        # PDF generator can be reused per league (or you can generate one combined PDF).
-                                        try:
-                                            pdf_info = self.pdf_generator.generate_archive_pdf(
-                                                league_info=league,
-                                                away_games=all_selected_games,
-                                                club_name=team_name,
-                                                event_type=st.session_state.art_der_veranstaltung
-                                            )
-                                            
-                                            if pdf_info:
-                                                key = f"pdf_{league['liga_id']}"
-                                                if key not in st.session_state:
-                                                    with open(pdf_info.filepath, 'rb') as pdf_file:
-                                                        st.session_state[key] = pdf_file.read()
-                                                
-                                                st.download_button(
-                                                    label="PDF herunterladen",
-                                                    data=st.session_state[key],
-                                                    file_name=os.path.basename(pdf_info.filepath),
-                                                    mime="application/pdf",
-                                                    use_container_width=True
-                                                )
-                                            else:
-                                                st.error("Fehler beim Generieren des PDFs")
-                                                
-                                        except Exception as e:
-                                            logger.error(f"Error generating PDF: {e}")
-                                            st.error("Fehler beim Generieren des PDFs")
-                                else:
-                                    st.info("Bitte wählen Sie mindestens ein Team aus.")
+                    st.session_state.archive_matching_leagues = matching_leagues
+                    st.session_state.archive_search_done = True
+                    if matching_leagues:
+                        st.success(f"✅ {len(matching_leagues)} Liga(en) gefunden, in denen '{st.session_state.archive_club_name}' spielt.")
                     else:
-                        st.warning(f"Keine Liga mit Teams gefunden, die '{team_name}' enthalten.")
+                        st.warning(f"Keine Liga gefunden, in der '{st.session_state.archive_club_name}' vertreten ist.")
             except Exception as e:
-                logger.error(f"Error in archive section: {e}")
-                st.error("Fehler bei der Suche")
+                logger.error(f"Fehler in Archiv-Sektion: {e}")
+                st.error("Fehler bei der Suche im Archiv.")
+        
+        if st.session_state.archive_search_done and st.session_state.archive_matching_leagues:
+            # Build league options for the select box.
+            league_options = {
+                league["liga_id"]: f"{league['name']} ({league['spielklasse']} {league['altersklasse']})"
+                for league in st.session_state.archive_matching_leagues
+            }
+            # Initialize the select box default only once.
+            if "selected_league_ids" not in st.session_state:
+                st.session_state.selected_league_ids = list(league_options.keys())
+            
+            selected_league_ids = st.multiselect(
+                "Wählen Sie die Ligen aus, für die Sie PDFs erstellen möchten:",
+                options=list(league_options.keys()),
+                format_func=lambda x: league_options[x],
+                default=st.session_state.selected_league_ids,
+                key="selected_league_ids"
+            )
+            
+            if selected_league_ids:
+                all_away_games = {}
+                for league in st.session_state.archive_matching_leagues:
+                    if league["liga_id"] in selected_league_ids:
+                        st.info(f"Suche Auswärtsspiele für Liga: {league_options[league['liga_id']]}")
+                        away_games = BasketballArchive(st.session_state.authenticator).get_away_games(league, st.session_state.archive_club_name)
+                        all_away_games[league["liga_id"]] = away_games
+                        st.write(f"{len(away_games)} Auswärtsspiele gefunden.")
+                        time.sleep(0.3)
+                if st.button("PDFs generieren für ausgewählte Ligen", key="generate_pdfs"):
+                    pdf_generator = PDFGenerator()
+                    generated_pdfs = []
+                    for league in st.session_state.archive_matching_leagues:
+                        if league["liga_id"] in selected_league_ids:
+                            away_games = all_away_games.get(league["liga_id"], [])
+                            if away_games:
+                                st.info(f"Erstelle PDF für Liga: {league_options[league['liga_id']]}")
+                                pdf_info = pdf_generator.generate_archive_pdf(
+                                    league_info=league,
+                                    away_games=away_games,
+                                    club_name=st.session_state.archive_club_name,
+                                    event_type=st.session_state.art_der_veranstaltung
+                                )
+                                if pdf_info:
+                                    generated_pdfs.append(pdf_info)
+                                    key = f"pdf_{league['liga_id']}"
+                                    with open(pdf_info.filepath, 'rb') as pdf_file:
+                                        st.session_state[key] = pdf_file.read()
+                                    st.download_button(
+                                        label=f"PDF herunterladen – {league_options[league['liga_id']]}",
+                                        data=st.session_state[key],
+                                        file_name=os.path.basename(pdf_info.filepath),
+                                        mime="application/pdf",
+                                        use_container_width=True
+                                    )
+                                else:
+                                    st.error(f"Fehler beim Generieren des PDFs für {league_options[league['liga_id']]}")
+                            else:
+                                st.warning(f"Keine Auswärtsspiele für {league_options[league['liga_id']]} gefunden.")
+                    if generated_pdfs:
+                        st.success("PDF-Erstellung abgeschlossen.")
+            else:
+                st.info("Bitte wählen Sie mindestens eine Liga aus.")
             
     def _render_step_1(self):
         """Render Step 1: Fetch Liga Data."""

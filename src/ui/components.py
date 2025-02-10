@@ -69,36 +69,23 @@ class UIComponents:
 
     @staticmethod
     def render_settings_sidebar():
-        """Render settings in the sidebar."""
         with st.sidebar:
             st.header("⚙️ Einstellungen")
-            
-            # Club name for PDF
             st.session_state.pdf_club_name = st.text_input(
                 "Vereinsname für PDF:",
                 value=st.session_state.get("pdf_club_name", "")
             )
-            
-            # Event type
             st.session_state.art_der_veranstaltung = st.text_input(
                 "Art der Veranstaltung:",
                 value=st.session_state.get("art_der_veranstaltung", "Saison")
             )
-            
-            # Home gym address
             st.session_state.home_gym_address = st.text_input(
                 "Adresse Heimhalle:",
                 value=st.session_state.get("home_gym_address", "Weiherhausstraße 8c, 64646 Heppenheim")
             )
 
     @staticmethod
-    def render_progress_bar(
-        current: int,
-        total: int,
-        prefix: str = "",
-        suffix: str = ""
-    ):
-        """Render a progress bar with current/total progress."""
+    def render_progress_bar(current: int, total: int, prefix: str = "", suffix: str = ""):
         progress = min(1.0, current / total) if total > 0 else 0
         progress_bar = st.progress(progress)
         st.write(f"{prefix} {current}/{total} {suffix}")
@@ -106,55 +93,27 @@ class UIComponents:
 
     @staticmethod
     def render_analysis_results(analysis: PDFAnalysis):
-        """Render PDF analysis results."""
         st.header("📊 Zusammenfassung")
-        
-        # Overview
         col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("PDFs erstellt", analysis.total_pdfs)
-        with col2:
-            st.metric("Spieler gesamt", analysis.total_players)
-        with col3:
-            st.metric("Fehlende Geburtstage", analysis.unknown_birthdays)
-        with col4:
-            st.metric("Lange Fahrten", analysis.long_distances)
-
-        # Recommendations
+        with col1: st.metric("PDFs erstellt", analysis.total_pdfs)
+        with col2: st.metric("Spieler gesamt", analysis.total_players)
+        with col3: st.metric("Fehlende Geburtstage", analysis.unknown_birthdays)
+        with col4: st.metric("Lange Fahrten", analysis.long_distances)
         if analysis.recommendations:
             st.subheader("📝 Empfehlungen")
-            for rec in analysis.recommendations:
-                st.info(rec)
-
-        # Issues
+            for rec in analysis.recommendations: st.info(rec)
         if analysis.files_with_issues:
             st.subheader("⚠️ Zu prüfende PDFs")
-            for issue in analysis.files_with_issues:
-                st.warning(issue)
-
-        # Detailed Statistics
+            for issue in analysis.files_with_issues: st.warning(issue)
         with st.expander("📈 Detaillierte Statistiken", expanded=False):
-            # Liga Statistics
             if analysis.details.get("pdfs_by_liga"):
                 st.subheader("PDFs pro Liga")
-                liga_df = pd.DataFrame.from_dict(
-                    analysis.details["pdfs_by_liga"], 
-                    orient='index',
-                    columns=['Anzahl']
-                )
+                liga_df = pd.DataFrame.from_dict(analysis.details["pdfs_by_liga"], orient='index', columns=['Anzahl'])
                 st.dataframe(liga_df)
-
-            # Monthly Statistics
             if analysis.details.get("pdfs_by_month"):
                 st.subheader("PDFs pro Monat")
-                month_df = pd.DataFrame.from_dict(
-                    analysis.details["pdfs_by_month"],
-                    orient='index',
-                    columns=['Anzahl']
-                )
+                month_df = pd.DataFrame.from_dict(analysis.details["pdfs_by_month"], orient='index', columns=['Anzahl'])
                 st.dataframe(month_df)
-
-            # Distance Statistics
             if analysis.details.get("distance_stats"):
                 st.subheader("Fahrstrecken-Statistiken")
                 stats = analysis.details["distance_stats"]
@@ -164,12 +123,6 @@ class UIComponents:
                 st.write(f"Minimum: {stats['min_km']:.1f} km")
 
 def format_time_remaining(seconds: float) -> str:
-    """Format remaining time in a human-readable way."""
-    if seconds < 60:
-        return f"{seconds:.0f} Sekunden"
-    elif seconds < 3600:
-        minutes = seconds / 60
-        return f"{minutes:.0f} Minuten"
-    else:
-        hours = seconds / 3600
-        return f"{hours:.1f} Stunden"
+    if seconds < 60: return f"{seconds:.0f} Sekunden"
+    elif seconds < 3600: return f"{seconds/60:.0f} Minuten"
+    else: return f"{seconds/3600:.1f} Stunden"

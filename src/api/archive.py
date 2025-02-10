@@ -29,65 +29,56 @@ class BasketballArchive:
         self.session = authenticator.session
         logger.debug("Initialized archive client with authenticated session")
 
-    def find_team_leagues(self, filter_params: ArchiveFilter, progress_placeholder=None) -> list[dict]:
-        """
-        Find leagues in the given season that have teams matching the search term.
-        An optional progress_placeholder (e.g. st.empty()) may be provided to update the UI.
-        Instead of selecting the first matching team we now collect all matching teams.
-        """
-        if progress_placeholder is None:
-            progress_placeholder = st.empty()
+    def find_team_leagues(self, filter_params: ArchiveFilter, progress_placeholder=None) -> List[dict]:
+            """
+            Find leagues in the given season that have teams matching the search term.
+            Uses progress_placeholder to update the UI about the current state.
+            Instead of stopping at the first match, it collects all matching teams.
+            """
+            if progress_placeholder is None:
+                progress_placeholder = st.empty()
 
-        progress_placeholder.info(f"Searching for leagues in season {filter_params.season_id}...")
-        all_leagues = self._get_all_leagues(filter_params.season_id)
-        progress_placeholder.info(f"Found {len(all_leagues)} leagues. Now scanning for teams containing '{filter_params.team_name}'...")
-        
-        matching_leagues = []
-        total_leagues = len(all_leagues)
-        for idx, league in enumerate(all_leagues):
-            progress_placeholder.info(f"Processing league {idx + 1}/{total_leagues}: {league['name']}")
-            teams = self._get_league_teams(league['liga_id'], filter_params.season_id)
-            # Collect all teams whose name contains the search term (case-insensitive)
-            matching_teams = [team for team in teams if filter_params.team_name.lower() in team['name'].lower()]
-            if matching_teams:
-                logger.info(f"Found {len(matching_teams)} matching team(s) in league: {league['name']}")
-                # Save the entire team list as well as the subset of matching teams
-                league["teams"] = teams
-                league["found_teams"] = matching_teams
-                matching_leagues.append(league)
-            else:
-                logger.debug(f"No matching teams in league: {league['name']}")
-            time.sleep(0.5)
-        
-        progress_placeholder.success(f"Search complete: found matching teams in {len(matching_leagues)} league(s).")
-        return matching_leagues
+            progress_placeholder.info(f"Suche in Saison {filter_params.season_id} nach Ligen ...")
+            all_leagues = self._get_all_leagues(filter_params.season_id)
+            progress_placeholder.info(f"{len(all_leagues)} Ligen gefunden. Suche nach Teams, die '{filter_params.team_name}' enthalten...")
+
+            matching_leagues = []
+            total_leagues = len(all_leagues)
+            for idx, league in enumerate(all_leagues):
+                progress_placeholder.info(f"[{idx+1}/{total_leagues}] Scanne Liga: {league['name']}")
+                teams = self._get_league_teams(league['liga_id'], filter_params.season_id)
+                # Collect all teams whose name (lowercase) includes the search term
+                matching_teams = [team for team in teams if filter_params.team_name.lower() in team['name'].lower()]
+                if matching_teams:
+                    logger.info(f"{len(matching_teams)} passende Team(s) in {league['name']} gefunden.")
+                    league["teams"] = teams  # complete list
+                    league["found_teams"] = matching_teams
+                    matching_leagues.append(league)
+                else:
+                    logger.debug(f"Keine passenden Teams in {league['name']} gefunden.")
+                time.sleep(0.3)
+            progress_placeholder.success(f"Suche abgeschlossen: {len(matching_leagues)} Liga(en) mit passenden Teams gefunden.")
+            return matching_leagues
 
 
     def _get_all_leagues(self, season_id: str) -> List[Dict]:
-        """Get all leagues from all pages."""
         all_leagues = []
         page = 1
         start_row = 0
-        
+
         while True:
-            logger.debug(f"Fetching league page {page} (startrow={start_row}) for season {season_id}")
-            st.write(f"Fetching league page {page} (startrow={start_row}) for season {season_id}")
-            # Get leagues from current page
+            logger.debug(f"Fetching Liga page {page} (startrow={start_row}) für Saison {season_id}")
+            st.write(f"… Lade Liga-Seite {page} (startrow={start_row}) …")
             leagues, next_start_row = self._get_leagues_page(season_id, start_row)
             all_leagues.extend(leagues)
-            
             if next_start_row is None:
-                logger.debug("No more pages to fetch")
+                logger.debug("Keine weiteren Seiten.")
                 break
-                
             start_row = next_start_row
             page += 1
-            
-            # Small delay between pages
             time.sleep(0.5)
-
-        logger.info(f"Found total of {len(all_leagues)} leagues across {page} pages")
-        st.write(f"Found total of {len(all_leagues)} leagues across {page} pages")
+        logger.info(f"Insgesamt {len(all_leagues)} Ligen in {page} Seite(n) gefunden.")
+        st.write(f"Insgesamt {len(all_leagues)} Ligen gefunden (über {page} Seite(n)).")
         return all_leagues
 
     def _get_leagues_page(self, season_id: str, start_row: int) -> tuple[List[Dict], Optional[int]]:
