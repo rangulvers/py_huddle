@@ -187,25 +187,23 @@ class GoogleMapsClient:
                 "key": self.api_key,
                 "region": "de",
                 "language": "de"
-                # Removed type restriction to match Google Maps behavior
             }
             
             response = requests.get(url, params=params)
             response.raise_for_status()
-            
             data = response.json()
-            
+
+            # Log full response for debugging (be sure to redact the API key in production!)
+            logger.debug(f"Google Places response for query '{query}': {data}")
+
             if data["status"] == "OK" and data["results"]:
                 return data["results"][0]
             
             return None
 
-        except RequestException as e:
-            logger.error(f"Network error in place search: {e}")
-            raise GoogleMapsAPIError(f"Network error in place search: {e}")
         except Exception as e:
-            logger.error(f"Error in place search: {e}")
-            raise GoogleMapsAPIError(f"Error in place search: {e}")
+            logger.error(f"Error finding place for query {query}: {e}")
+            raise
 
     def _get_place_details(self, place_id: str) -> Optional[Dict]:
         """Get detailed place information using the Places API Details."""

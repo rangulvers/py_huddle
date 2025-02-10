@@ -123,9 +123,9 @@ class PDFGenerator:
                         name_text = name
                     
                     # Add name to Name oder Spielort field
-                    data[f"(Name oder SpielortRow{idx})"] = name_text + " " # stupid hack to prevent text clipping
+                    data[f"(Name oder SpielortRow{idx})"] = name_text + "  " # stupid hack to prevent text clipping
                     # Add birthday to Einzelteilngeb field
-                    data[f"(EinzelteilngebRow{idx})"] = birthday_text
+                    data[f"(EinzelteilngebRow{idx})"] = birthday_text + "    " # stupid hack to prevent text clipping
                     data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
                     
                     logger.debug(f"Added to row {idx}:")
@@ -241,7 +241,7 @@ class PDFGenerator:
                                 data[f"(Name oder SpielortRow{idx})"] = f" {formatted_address} ({home_team}) "
                                 logger.debug(f"Set location: {formatted_address}")
                                 if distance is not None:
-                                    round_trip_distance = ceil(distance * 2)
+                                    round_trip_distance = ceil(distance * 2) * 5 # 5 players
                                     data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
                                     total_distance += round_trip_distance
                                     logger.debug(f"Set round-trip distance: {round_trip_distance} km")
@@ -313,43 +313,59 @@ class PDFGenerator:
             return None
         
     def _lookup_birthday(self, player: Dict, birthday_lookup: Dict[str, str]) -> Tuple[str, bool]:
-            """
-            Look up birthday for a player, handling middle names.
+        """
+        Look up birthday for a player, handling middle names and case inconsistencies.
+        
+        Args:
+            player: Player dictionary with name information.
+            birthday_lookup: Birthday lookup dictionary mapping "lastname, firstname" to birthday.
             
-            Args:
-                player: Player dictionary with name information
-                birthday_lookup: Birthday lookup dictionary
-                
-            Returns:
-                Tuple of (birthday string, success boolean)
-            """
-            lastname = player['Nachname'].strip()
-            full_firstname = player['Vorname'].strip()
-            
-            # Try exact match first
-            exact_key = f"{lastname}, {full_firstname}"
-            birthday = birthday_lookup.get(exact_key)
-            if birthday:
-                logger.debug(f"Found exact birthday match for {exact_key}")
+        Returns:
+            Tuple of (birthday string, success boolean).
+        """
+        # Normalize helper function
+        def normalize(name: str) -> str:
+            return " ".join(name.strip().split()).lower()
+
+        # Normalize player's names
+        lastname = normalize(player.get('Nachname', ''))
+        full_firstname = normalize(player.get('Vorname', ''))
+        normalized_full_key = f"{lastname}, {full_firstname}"
+
+        # Pre-normalize all keys from birthday_lookup for consistent comparisons.
+        normalized_lookup = {normalize(key): value for key, value in birthday_lookup.items()}
+
+        # 1. Try exact match first
+        if normalized_full_key in normalized_lookup:
+            logger.debug(f"Found exact birthday match for {normalized_full_key}")
+            return normalized_lookup[normalized_full_key], True
+
+        # 2. Try with just the first part of the first name
+        if full_firstname:
+            first_part = full_firstname.split()[0]
+            normalized_first_key = f"{lastname}, {first_part}"
+            if normalized_first_key in normalized_lookup:
+                logger.debug(f"Found birthday match using first name only: {normalized_first_key}")
+                return normalized_lookup[normalized_first_key], True
+
+        # 3. Fallback: try to match if all parts of the player's first name appear
+        #    in any lookup key for this lastname.
+        for key, birthday in normalized_lookup.items():
+            # Check that the key starts with the lastname and a comma.
+            if not key.startswith(f"{lastname},"):
+                continue
+            # Extract the first part of the key (after the comma)
+            try:
+                _, key_firstname = key.split(",", 1)
+            except ValueError:
+                continue
+            key_firstname = key_firstname.strip()
+            # If all parts of the provided full first name are present in the key's first name, consider it a match.
+            player_name_parts = full_firstname.split()
+            if all(part in key_firstname for part in player_name_parts):
+                logger.debug(f"Found birthday match with composite name: {key}")
                 return birthday, True
-            
-            # If no match, try with first part of first name
-            firstname_parts = full_firstname.split()
-            if len(firstname_parts) > 0:
-                first_only_key = f"{lastname}, {firstname_parts[0]}"
-                birthday = birthday_lookup.get(first_only_key)
-                if birthday:
-                    logger.debug(f"Found birthday match using first name only: {first_only_key}")
-                    return birthday, True
-                    
-            # If still no match, try the reverse: look for longer names in lookup
-            # that start with our shorter name
-            search_prefix = f"{lastname}, {firstname_parts[0]}"
-            for lookup_name, birthday in birthday_lookup.items():
-                if lookup_name.startswith(search_prefix):
-                    logger.debug(f"Found birthday match with prefix: {lookup_name}")
-                    return birthday, True
-            
-            logger.warning(f"No birthday found for player: {lastname}, {full_firstname}")
-            logger.debug(f"Available names in lookup: {list(birthday_lookup.keys())}")
-            return "", False
+
+        logger.warning(f"No birthday found for player: {lastname}, {full_firstname}")
+        logger.debug(f"Available names in lookup: {list(birthday_lookup.keys())}")
+        return "", False

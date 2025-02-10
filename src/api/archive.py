@@ -29,52 +29,39 @@ class BasketballArchive:
         self.session = authenticator.session
         logger.debug("Initialized archive client with authenticated session")
 
-    def find_team_leagues(self, filter_params: ArchiveFilter) -> List[Dict]:
-        """Find all leagues where the specified team plays and get their away games."""
-        try:
-            logger.info(f"Searching for team '{filter_params.team_name}' in season {filter_params.season_id}")
-            
-            # Get all leagues (across all pages)
-            all_leagues = self._get_all_leagues(filter_params.season_id)
-            logger.info(f"Found {len(all_leagues)} total leagues to search")
+    def find_team_leagues(self, filter_params: ArchiveFilter, progress_placeholder=None) -> list[dict]:
+        """
+        Find leagues in the given season that have teams matching the search term.
+        An optional progress_placeholder (e.g. st.empty()) may be provided to update the UI.
+        Instead of selecting the first matching team we now collect all matching teams.
+        """
+        if progress_placeholder is None:
+            progress_placeholder = st.empty()
 
-            # Search for team in each league and get away games
-            matching_leagues = []
-            for league in all_leagues:
-                logger.debug(f"Checking league: {league['name']}")
-                
-                # Get teams for this league
-                teams = self._get_league_teams(league['liga_id'], filter_params.season_id)
-                
-                # Check if our team is in this league
-                team_found = False
-                for team in teams:
-                    if filter_params.team_name.lower() in team['name'].lower():
-                        team_found = True
-                        logger.info(f"Found team in league: {league['name']}")
-                        
-                        # Get away games for this league
-                        away_games = self.get_away_games(league, filter_params.team_name)
-                        
-                        matching_leagues.append({
-                            **league,
-                            'teams': teams,
-                            'found_team': team,
-                            'away_games': away_games
-                        })
-                        break
-                
-                if not team_found:
-                    logger.debug(f"Team not found in league: {league['name']}")
-                
-                time.sleep(0.5)  # Prevent rate limiting
+        progress_placeholder.info(f"Searching for leagues in season {filter_params.season_id}...")
+        all_leagues = self._get_all_leagues(filter_params.season_id)
+        progress_placeholder.info(f"Found {len(all_leagues)} leagues. Now scanning for teams containing '{filter_params.team_name}'...")
+        
+        matching_leagues = []
+        total_leagues = len(all_leagues)
+        for idx, league in enumerate(all_leagues):
+            progress_placeholder.info(f"Processing league {idx + 1}/{total_leagues}: {league['name']}")
+            teams = self._get_league_teams(league['liga_id'], filter_params.season_id)
+            # Collect all teams whose name contains the search term (case-insensitive)
+            matching_teams = [team for team in teams if filter_params.team_name.lower() in team['name'].lower()]
+            if matching_teams:
+                logger.info(f"Found {len(matching_teams)} matching team(s) in league: {league['name']}")
+                # Save the entire team list as well as the subset of matching teams
+                league["teams"] = teams
+                league["found_teams"] = matching_teams
+                matching_leagues.append(league)
+            else:
+                logger.debug(f"No matching teams in league: {league['name']}")
+            time.sleep(0.5)
+        
+        progress_placeholder.success(f"Search complete: found matching teams in {len(matching_leagues)} league(s).")
+        return matching_leagues
 
-            logger.info(f"Found team in {len(matching_leagues)} leagues")
-            return matching_leagues
-
-        except Exception as e:
-            logger.error(f"Error searching for team: {e}")
-            raise
 
     def _get_all_leagues(self, season_id: str) -> List[Dict]:
         """Get all leagues from all pages."""
