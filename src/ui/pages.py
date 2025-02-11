@@ -122,8 +122,6 @@ class MainPage:
                 st.rerun()
   
     def render_archive_section(self):
-  
-
         st.header("📚 Archiv")
         # Initialize archive-specific session state variables if not present.
         if "archive_search_done" not in st.session_state:
@@ -196,21 +194,32 @@ class MainPage:
             
             if selected_league_ids:
                 all_away_games = {}
-                for league in st.session_state.archive_matching_leagues:
+                total_leagues = len(selected_league_ids)
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                for idx, league in enumerate(st.session_state.archive_matching_leagues):
                     if league["liga_id"] in selected_league_ids:
-                        st.info(f"Suche Auswärtsspiele für Liga: {league_options[league['liga_id']]}")
+                        status_text.text(f"Suche Auswärtsspiele für Liga: {league_options[league['liga_id']]}")
                         away_games = BasketballArchive(st.session_state.authenticator).get_away_games(league, st.session_state.archive_club_name)
                         all_away_games[league["liga_id"]] = away_games
                         st.write(f"{len(away_games)} Auswärtsspiele gefunden.")
+                        progress = min(1.0, (idx + 1) / total_leagues)
+                        progress_bar.progress(progress)
                         time.sleep(0.3)
+                
                 if st.button("PDFs generieren für ausgewählte Ligen", key="generate_pdfs"):
                     pdf_generator = PDFGenerator()
                     generated_pdfs = []
-                    for league in st.session_state.archive_matching_leagues:
+                    total_leagues = len(selected_league_ids)
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    for idx, league in enumerate(st.session_state.archive_matching_leagues):
                         if league["liga_id"] in selected_league_ids:
+                            status_text.text(f"Erstelle PDF für Liga: {league_options[league['liga_id']]}")
                             away_games = all_away_games.get(league["liga_id"], [])
                             if away_games:
-                                st.info(f"Erstelle PDF für Liga: {league_options[league['liga_id']]}")
                                 pdf_info = pdf_generator.generate_archive_pdf(
                                     league_info=league,
                                     away_games=away_games,
@@ -233,6 +242,10 @@ class MainPage:
                                     st.error(f"Fehler beim Generieren des PDFs für {league_options[league['liga_id']]}")
                             else:
                                 st.warning(f"Keine Auswärtsspiele für {league_options[league['liga_id']]} gefunden.")
+                            progress = min(1.0, (idx + 1) / total_leagues)
+                            progress_bar.progress(progress)
+                            time.sleep(0.3)
+                    
                     if generated_pdfs:
                         st.success("PDF-Erstellung abgeschlossen.")
             else:
