@@ -4,6 +4,7 @@ from typing import List
 from src.config import REQUIRED_COLUMNS
 from src.data.processing import DataProcessor
 from src.pdf.analyzer import PDFAnalysis
+from loguru import logger
 
 class UIComponents:
     """Reusable UI components for the application."""

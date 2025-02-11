@@ -6,8 +6,8 @@ from pdfrw import PdfReader, PdfWriter, PdfDict
 from loguru import logger
 from src.config import PDF_CONFIG, PDF_FIELD_MAPPINGS
 from src.data.models import PDFInfo, Liga
-from src.api.google_maps import GoogleMapsClient, GoogleMapsAPIError
-import streamlit as st  # Add this import
+from src.api.google_maps import GoogleMapsClient
+
 
 class PDFGenerator:
     """Generate PDF documents from template."""

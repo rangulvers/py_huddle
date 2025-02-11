@@ -15,3 +15,8 @@ wheels/
 
 /logs
 *.logs
+
+
+tests/
+conftest.py
+.pytest_cache/
