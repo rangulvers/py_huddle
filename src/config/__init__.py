@@ -38,7 +38,7 @@ PDF_CONFIG = {
     "template_path": "templates/01_fahrtkostenzuschsseeinzelblatt neu_V2beschreibbar.pdf",
     "output_dir": "output/pdfs",
     "max_players": 5,
-    "home_gym_address": os.getenv("HOME_GYM_ADDRESS"), 
+    "home_gym_address": os.getenv("HOME_GYM_ADDRESS"),
     "pdf_club_name": os.getenv("PDF_CLUB_NAME")
 }
 

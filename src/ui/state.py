@@ -4,7 +4,7 @@ from src.config import HOME_GYM_ADDRESS, PDF_CONFIG
 
 class SessionState:
     """Manage Streamlit session state."""
-    
+
     @staticmethod
     def init_state() -> None:
         defaults: Dict[str, Any] = {

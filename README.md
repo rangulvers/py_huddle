@@ -1,8 +1,8 @@
 
 # Basketball Game Management System
 
-A Python-based system for managing basketball game information and to generating travel expense reports for teams. 
-  
+A Python-based system for managing basketball game information and to generating travel expense reports for teams.
+
 ![image](https://github.com/user-attachments/assets/415d3fc3-7797-4303-a6a6-bb8d59ee6b3a)
 
 ## Features

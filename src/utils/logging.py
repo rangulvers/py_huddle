@@ -4,23 +4,23 @@ import os
 def setup_logging(debug_mode: bool):
     """
     Configure logging with comprehensive debug information.
-    
+
     Args:
         debug_mode: Boolean to enable/disable debug logging
     """
     # Remove any existing handlers
     logger.remove()
-    
+
     # Create logs directory if it doesn't exist
     os.makedirs("logs", exist_ok=True)
-    
+
     # Common format elements
     time_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
     level_format = "<level>{level: <8}</level>"
     location_format = "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>"
     process_format = "<blue>[{process.name}:{process.id}]</blue>"
     thread_format = "<blue>[{thread.name}]</blue>"
-    
+
     # Debug format includes more details
     debug_format = (
         f"{time_format} | "
@@ -32,7 +32,7 @@ def setup_logging(debug_mode: bool):
         "{exception}"
         "</level>"
     )
-    
+
     # Regular format is more concise
     regular_format = (
         f"{time_format} | "
@@ -40,10 +40,10 @@ def setup_logging(debug_mode: bool):
         f"{location_format} | "
         "<level>{message}</level>"
     )
-    
+
     # Set log level based on debug mode
     log_level = "DEBUG" if debug_mode else "INFO"
-    
+
     # File handler with rotation and retention
     logger.add(
         "logs/app.log",
@@ -56,7 +56,7 @@ def setup_logging(debug_mode: bool):
         enqueue=True,
         catch=True,
     )
-    
+
     # Debug log file (only in debug mode)
     if debug_mode:
         logger.add(
@@ -71,11 +71,11 @@ def setup_logging(debug_mode: bool):
             enqueue=True,
             catch=True,
         )
-    
+
     # Console handler with custom sink to prevent extra newlines
     def console_sink(message):
         print(message, end="" if message.endswith("\n") else "\n")
-        
+
     logger.add(
         console_sink,
         level=log_level,
@@ -84,7 +84,7 @@ def setup_logging(debug_mode: bool):
         backtrace=debug_mode,
         diagnose=debug_mode,
     )
-    
+
     # Log initial debug status
     logger.info(f"Logging initialized (Debug mode: {debug_mode})")
     if debug_mode:

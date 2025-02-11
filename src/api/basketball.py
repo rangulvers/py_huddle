@@ -15,7 +15,7 @@ class BasketballClient:
     def fetch_liga_data(self, club_name: str) -> pd.DataFrame:
         """Fetch league data for a club."""
         logger.debug(f"Fetching liga data for club: {club_name}")
-        
+
         url = f"{self.base_url}/index.jsp?Action=100&Verband={self.verband}"
         payload = self._build_liga_search_payload(club_name)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -30,7 +30,7 @@ class BasketballClient:
                 )
 
             response = requests.post(url, headers=headers, data=payload)
-            
+
             if self.debug:
                 st.session_state.debug_manager.log_response(
                     response,
@@ -39,15 +39,15 @@ class BasketballClient:
 
             response.raise_for_status()
             df = self._parse_liga_data(response.text)
-            
+
             if self.debug:
                 st.session_state.debug_manager.log_data_processing(
                     "Parsed Liga Data",
                     df
                 )
-            
+
             return df
-            
+
         except requests.exceptions.RequestException as e:
             logger.error(f"Network error fetching liga data: {e}")
             st.error(ERROR_MESSAGES["network_error"].format(error=str(e)))
@@ -56,23 +56,23 @@ class BasketballClient:
     def fetch_game_details(self, spielplan_id: str, liga_id: str) -> Optional[Dict]:
         """
         Fetch details for a specific game.
-        
+
         Args:
             spielplan_id: Game schedule ID
             liga_id: League ID
-            
+
         Returns:
             Dictionary with game details
         """
         logger.debug(f"Fetching game details: spielplan_id={spielplan_id}, liga_id={liga_id}")
-        
+
         url = self._build_game_details_url(spielplan_id, liga_id)
 
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
             return self._parse_game_details(response.text, spielplan_id, liga_id)
-            
+
         except requests.exceptions.RequestException as e:
             logger.error(f"Network error fetching game details: {e}")
             return None
@@ -184,7 +184,7 @@ class BasketballClient:
                 if len(cells) >= 2:
                     lastname = cells[0].get_text(strip=True)
                     firstname = cells[1].get_text(strip=True)
-                    
+
                     if lastname and firstname and lastname != "Nachname" and firstname != "Vorname":
                         player = {
                             "Nachname": lastname,

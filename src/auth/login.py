@@ -12,10 +12,10 @@ class LoginCredentials:
 
 class BBAuthenticator:
     """Handle authentication with basketball-bund.net."""
-    
+
     BASE_URL = "https://www.basketball-bund.net"
     LOGIN_URL = f"{BASE_URL}/login.do"
-    
+
     def __init__(self):
         self.session = requests.Session()
         self.is_authenticated = False
@@ -46,7 +46,7 @@ class BBAuthenticator:
             }
 
             logger.debug("Making POST request for login")
-            
+
             response = self.session.post(
                 f"{self.LOGIN_URL}?reqCode=login",
                 data=login_data,

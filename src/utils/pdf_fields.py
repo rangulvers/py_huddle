@@ -7,14 +7,14 @@ def print_pdf_fields(pdf_path: str):
         # Read the PDF
         pdf = PdfReader(pdf_path)
         logger.info(f"Reading PDF: {pdf_path}")
-        
+
         # Store all found fields
         fields = []
-        
+
         # Iterate through pages
         for page_num, page in enumerate(pdf.pages, 1):
             logger.info(f"Checking page {page_num}")
-            
+
             if page.Annots:
                 for annotation in page.Annots:
                     if annotation.T:

@@ -21,7 +21,7 @@ from src.auth.login import BBAuthenticator
 
 class MainPage:
     """Main page of the application."""
-    
+
     def __init__(self):
         """Initialize main page with required clients."""
         self.basketball_client = BasketballClient()
@@ -29,7 +29,7 @@ class MainPage:
         self.pdf_generator = PDFGenerator()
         self.pdf_analyzer = PDFAnalyzer()
         self.ui = UIComponents()
-        
+
     def render_current_season(self) -> None:
         """Render the current season functionality."""
         st.title("🏀 Basketball Reisekosten Generator")
@@ -38,10 +38,10 @@ class MainPage:
             st.session_state.debug_manager.render_debug_sidebar()
         # Initialize session state
         SessionState.init_state()
-        
+
         # Render settings sidebar
         self.ui.render_settings_sidebar()
-        
+
         # Render steps
         self._render_step_1()
         if st.session_state.step_1_done:
@@ -54,25 +54,25 @@ class MainPage:
     def render_login_section(self) -> None:
         """Render the login section."""
         st.header("🔐 Login")
-        
+
         with st.form("login_form"):
             st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
             dotenv.load_dotenv()
-            
+
             username = st.text_input("Benutzername", value=os.getenv("BASKETBALL_BUND_USERNAME"))
             password = st.text_input("Passwort", type="password", value=os.getenv("BASKETBALL_BUND_PASSWORD"))
-            
+
             submitted = st.form_submit_button("Anmelden")
-            
+
             if submitted:
                 if username and password:
                     credentials = LoginCredentials(username=username, password=password)
                     success, error = st.session_state.authenticator.login(credentials)
-                    
+
                     if success:
                         st.session_state.is_logged_in = True
                         st.success("✅ Erfolgreich angemeldet!")
-                        
+
                     else:
                         st.error(f"❌ Anmeldung fehlgeschlagen: {error}")
                 else:
@@ -85,7 +85,7 @@ class MainPage:
     def _render_login_section(self):
         """Render the login section."""
         st.header("🔐 Login")
-        
+
         # Initialize session state for login
         if 'is_logged_in' not in st.session_state:
             st.session_state.is_logged_in = False
@@ -98,14 +98,14 @@ class MainPage:
                 st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
                 username = st.text_input("Benutzername")
                 password = st.text_input("Passwort", type="password")
-                
+
                 submitted = st.form_submit_button("Anmelden")
-                
+
                 if submitted:
                     if username and password:
                         credentials = LoginCredentials(username=username, password=password)
                         success, error = st.session_state.authenticator.login(credentials)
-                        
+
                         if success:
                             st.session_state.is_logged_in = True
                             st.success("✅ Erfolgreich angemeldet!")
@@ -120,7 +120,7 @@ class MainPage:
                 st.session_state.is_logged_in = False
                 st.session_state.authenticator = BBAuthenticator()
                 st.rerun()
-  
+
     def render_archive_section(self):
         st.header("📚 Archiv")
         # Initialize archive-specific session state variables if not present.
@@ -128,7 +128,7 @@ class MainPage:
             st.session_state.archive_search_done = False
         if "archive_matching_leagues" not in st.session_state:
             st.session_state.archive_matching_leagues = []
-        
+
         col1, col2 = st.columns(2)
         with col1:
             current_season = 2023
@@ -146,7 +146,7 @@ class MainPage:
                 value="TV Heppenheim",
                 key="archive_clubname"
             )
-        
+
         if st.button("Suche starten", use_container_width=True, key="archive_start"):
             if not st.session_state.archive_club_name:
                 st.warning("Bitte geben Sie einen Vereinsnamen ein.")
@@ -173,7 +173,7 @@ class MainPage:
             except Exception as e:
                 logger.error(f"Fehler in Archiv-Sektion: {e}")
                 st.error("Fehler bei der Suche im Archiv.")
-        
+
         if st.session_state.archive_search_done and st.session_state.archive_matching_leagues:
             # Build league options for the select box.
             league_options = {
@@ -183,7 +183,7 @@ class MainPage:
             # Initialize the select box default only once.
             if "selected_league_ids" not in st.session_state:
                 st.session_state.selected_league_ids = list(league_options.keys())
-            
+
             selected_league_ids = st.multiselect(
                 "Wählen Sie die Ligen aus, für die Sie PDFs erstellen möchten:",
                 options=list(league_options.keys()),
@@ -191,13 +191,13 @@ class MainPage:
                 default=st.session_state.selected_league_ids,
                 key="selected_league_ids"
             )
-            
+
             if selected_league_ids:
                 all_away_games = {}
                 total_leagues = len(selected_league_ids)
                 progress_bar = st.progress(0)
                 status_text = st.empty()
-                
+
                 for idx, league in enumerate(st.session_state.archive_matching_leagues):
                     if league["liga_id"] in selected_league_ids:
                         status_text.text(f"Suche Auswärtsspiele für Liga: {league_options[league['liga_id']]}")
@@ -207,14 +207,14 @@ class MainPage:
                         progress = min(1.0, (idx + 1) / total_leagues)
                         progress_bar.progress(progress)
                         time.sleep(0.3)
-                
+
                 if st.button("PDFs generieren für ausgewählte Ligen", key="generate_pdfs"):
                     pdf_generator = PDFGenerator()
                     generated_pdfs = []
                     total_leagues = len(selected_league_ids)
                     progress_bar = st.progress(0)
                     status_text = st.empty()
-                    
+
                     for idx, league in enumerate(st.session_state.archive_matching_leagues):
                         if league["liga_id"] in selected_league_ids:
                             status_text.text(f"Erstelle PDF für Liga: {league_options[league['liga_id']]}")
@@ -245,17 +245,17 @@ class MainPage:
                             progress = min(1.0, (idx + 1) / total_leagues)
                             progress_bar.progress(progress)
                             time.sleep(0.3)
-                    
+
                     if generated_pdfs:
                         st.success("PDF-Erstellung abgeschlossen.")
             else:
                 st.info("Bitte wählen Sie mindestens eine Liga aus.")
-            
+
     def _render_step_1(self):
         """Render Step 1: Fetch Liga Data."""
         st.header("1️⃣ Liga-Daten abrufen")
         club_name = st.text_input("Vereinsname:", value="TV Heppenheim")
-        
+
         # Store the club name in session state
         st.session_state.club_name = club_name
 
@@ -274,9 +274,9 @@ class MainPage:
     def _render_step_2(self):
         """Render Step 2: Upload Game Data and Player List."""
         st.header("2️⃣ Daten hochladen")
-        
+
         col1, col2 = st.columns(2)
-        
+
         with col1:
             st.subheader("2.1 Spielerliste hochladen")
             player_list_help = """
@@ -285,7 +285,7 @@ class MainPage:
             - Nachname
             - Geburtsdatum
             """
-            
+
             if not st.session_state.get("player_data_status", False):
                 player_list_success = self.ui.render_file_upload(
                     label="Spielerliste (CSV/Excel)",
@@ -311,7 +311,7 @@ class MainPage:
             - Gast
             - Halle
             """
-            
+
             if not st.session_state.get("game_data_status", False):
                 game_data_success = self.ui.render_file_upload(
                     label="Spieldaten (CSV/Excel)",
@@ -329,18 +329,18 @@ class MainPage:
                     st.experimental_rerun()
 
         # Check if both files are loaded
-        if (st.session_state.get("player_data_status", False) and 
+        if (st.session_state.get("player_data_status", False) and
             st.session_state.get("game_data_status", False)):
             st.success("✅ Alle erforderlichen Daten wurden geladen!")
-            
+
             # Display data previews
             with st.expander("📊 Datenvorschau", expanded=False):
                 st.subheader("Spielerliste")
                 st.dataframe(st.session_state.player_birthdays_df.head())
-                
+
                 st.subheader("Spieldaten")
                 st.dataframe(st.session_state.uploaded_df.head())
-                
+
             SessionState.update_progress(2)
         else:
             st.warning("⚠️ Bitte laden Sie beide Dateien hoch, um fortzufahren.")
@@ -348,7 +348,7 @@ class MainPage:
     def _render_step_3(self):
         """Render Step 3: Select Leagues and Fetch Details."""
         st.header("3️⃣ Ligen auswählen & Spieldetails laden")
-        
+
         df = st.session_state.uploaded_df
         liga_df = st.session_state.liga_df
         club_name = st.session_state.get("club_name", "TV Heppenheim")
@@ -383,14 +383,14 @@ class MainPage:
                     # Create selection interface
                     st.markdown("#### Verfügbare Ligen")
                     display_labels = [opt[1] for opt in options]
-                    
+
                     selected_display_labels = st.multiselect(
                         "Wähle die zu verarbeitenden Ligen:",
                         options=display_labels,
                         default=display_labels,
                         help="Wählen Sie die Ligen aus, für die PDFs erstellt werden sollen."
                     )
-                    
+
                     if st.button("🔄 Spieldetails laden", key="fetch_details"):
                         # Convert labels back to IDs
                         selected_liga_ids = []
@@ -402,7 +402,7 @@ class MainPage:
 
                         # Filter games
                         filtered_df = DataProcessor.filter_relevant_games(
-                            df, 
+                            df,
                             selected_liga_ids,
                             club_name
                         )
@@ -411,18 +411,18 @@ class MainPage:
                             with st.spinner("Lade Spieldetails..."):
                                 total_games = len(filtered_df)
                                 progress_container = st.container()
-                                
+
                                 with progress_container:
                                     progress_bar = st.progress(0)
                                     status_text = st.empty()
                                     game_data = []
-                                    
+
                                     for idx, row in filtered_df.iterrows():
                                         # Calculate progress
                                         current_idx = len(game_data)
                                         progress = min(1.0, current_idx / total_games)
                                         progress_bar.progress(progress)
-                                        
+
                                         status_text.markdown(f"""
                                         **Lade Spiel {current_idx + 1}/{total_games}**
                                         - Liga: {row.get('Liga', 'Unknown')}
@@ -437,7 +437,7 @@ class MainPage:
                                             if details:
                                                 # Add hall information
                                                 details['hall_name'] = row.get('Halle', 'Unknown')
-                                                
+
                                                 # Get location info
                                                 hall_address, distance = self.google_maps_client.get_gym_location(
                                                     row.get('Gast', ''),
@@ -445,7 +445,7 @@ class MainPage:
                                                 )
                                                 details['hall_address'] = hall_address
                                                 details['distance'] = distance
-                                                
+
                                                 game_data.append(details)
                                         except Exception as e:
                                             logger.error(f"Error fetching game details: {e}")
@@ -454,7 +454,7 @@ class MainPage:
 
                                     # Final progress update
                                     progress_bar.progress(1.0)
-                                    
+
                                     # Clear progress indicators
                                     time.sleep(0.5)
                                     progress_container.empty()
@@ -463,12 +463,12 @@ class MainPage:
                                     st.session_state.match_details = pd.DataFrame(game_data)
                                     st.success(f"✅ {len(game_data)} Spiele gefunden!")
                                     SessionState.update_progress(3)
-                                    
+
                                     # Show preview of loaded data
                                     with st.expander("📊 Vorschau der geladenen Spiele", expanded=False):
                                         st.dataframe(
                                             st.session_state.match_details[
-                                                ['Spielplan_ID', 'Liga_ID', 'Date', 
+                                                ['Spielplan_ID', 'Liga_ID', 'Date',
                                                  'Home Team', 'Away Team']
                                             ]
                                         )
@@ -481,7 +481,7 @@ class MainPage:
     def _render_step_4(self):
         """Render Step 4: Generate PDFs."""
         st.header("4️⃣ PDFs erzeugen")
-        
+
         # Initialize PDF storage in session state if not exists
         if 'generated_pdfs' not in st.session_state:
             st.session_state.generated_pdfs = []
@@ -490,7 +490,7 @@ class MainPage:
         with st.container():
             if st.button("🔄 PDFs generieren", use_container_width=True):
                 match_details = st.session_state.match_details
-                
+
                 if match_details is None or match_details.empty:
                     st.error("❌ Keine Spieldaten vorhanden.")
                     return
@@ -501,7 +501,7 @@ class MainPage:
 
                 # Clear previous PDFs
                 st.session_state.generated_pdfs = []
-                
+
                 # Build birthday lookup
                 birthday_lookup = DataProcessor.build_birthday_lookup(
                     st.session_state.player_birthdays_df
@@ -516,13 +516,13 @@ class MainPage:
                 with st.spinner("Generiere PDFs..."):
                     total_games = len(match_details)
                     progress_container = st.container()
-                    
+
                     with progress_container:
                         progress_bar = st.progress(0)
                         status_text = st.empty()
-                        
+
                         start_time = time.time()
-                        
+
                         for idx, row in match_details.iterrows():
                             logger.debug(f"Processing game {idx + 1}/{total_games}")
                             logger.debug(f"Game data: {row.to_dict()}")
@@ -530,7 +530,7 @@ class MainPage:
                             # Calculate progress and update UI
                             progress = (idx + 1) / total_games
                             progress_bar.progress(progress)
-                            
+
                             elapsed_time = time.time() - start_time
                             if idx > 0:
                                 time_per_item = elapsed_time / idx
@@ -541,9 +541,9 @@ class MainPage:
                                 time_text = "Berechne..."
 
                             status_text.markdown(f"""
-                            **Generiere PDF {idx + 1}/{total_games}**  
-                            Geschätzte Restzeit: {time_text}  
-                            Liga: {row.get('Liga_ID', 'Unknown')}  
+                            **Generiere PDF {idx + 1}/{total_games}**
+                            Geschätzte Restzeit: {time_text}
+                            Liga: {row.get('Liga_ID', 'Unknown')}
                             Spiel: {row.get('Spielplan_ID', 'Unknown')}
                             """)
 
@@ -551,7 +551,7 @@ class MainPage:
                             liga_df_filtered = st.session_state.liga_df[
                                 st.session_state.liga_df['Liga_ID'] == row['Liga_ID']
                             ]
-                            
+
                             if liga_df_filtered.empty:
                                 logger.warning(f"No Liga info found for Liga_ID: {row['Liga_ID']}")
                                 continue
@@ -567,7 +567,7 @@ class MainPage:
                                 event_type=event_type,
                                 birthday_lookup=birthday_lookup
                             )
-                            
+
                             if pdf_info:
                                 st.session_state.generated_pdfs.append(pdf_info)
                                 logger.debug(f"Successfully generated PDF: {pdf_info.filepath}")
@@ -577,14 +577,14 @@ class MainPage:
         # Results Section (only show if PDFs were generated)
         if st.session_state.generated_pdfs:
             st.write("---")
-            
+
             # Summary Tabs
             tab1, tab2, tab3 = st.tabs(["📊 Übersicht", "📥 Download", "ℹ️ Details"])
-            
+
             with tab1:
                 # Statistics Row
                 stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
-                
+
                 total_pdfs = len(st.session_state.generated_pdfs)
                 complete_pdfs = sum(1 for d in st.session_state.generated_pdfs if not d.has_unknown_birthdays and d.distance)
                 incomplete_pdfs = total_pdfs - complete_pdfs
@@ -613,7 +613,7 @@ class MainPage:
 
                 # Summary Table
                 st.write("### Detaillierte Übersicht")
-                
+
                 # Create summary data
                 summary_data = []
                 for pdf_info in st.session_state.generated_pdfs:
@@ -622,7 +622,7 @@ class MainPage:
                         missing.append("Geburtsdaten")
                     if not pdf_info.distance:
                         missing.append("Entfernung")
-                    
+
                     summary_data.append([
                         "⚠️" if missing else "✅",
                         pdf_info.team,
@@ -639,14 +639,14 @@ class MainPage:
 
             with tab2:
                 download_col1, download_col2 = st.columns([2, 1])
-                
+
                 with download_col1:
                     st.write("### Einzelne PDFs")
                     for pdf_info in st.session_state.generated_pdfs:
                         try:
                             with open(pdf_info.filepath, 'rb') as pdf_file:
                                 pdf_data = pdf_file.read()
-                            
+
                             filename = os.path.basename(pdf_info.filepath)
                             st.download_button(
                                 label=f"📄 {pdf_info.team} - {pdf_info.date}",
@@ -669,10 +669,10 @@ class MainPage:
                                 for pdf_info in st.session_state.generated_pdfs:
                                     if os.path.exists(pdf_info.filepath):
                                         zip_file.write(
-                                            pdf_info.filepath, 
+                                            pdf_info.filepath,
                                             os.path.basename(pdf_info.filepath)
                                         )
-                            
+
                             st.download_button(
                                 label="��� Als ZIP herunterladen",
                                 data=zip_buffer.getvalue(),
@@ -689,7 +689,7 @@ class MainPage:
                 st.write("### Status-Erklärung")
                 st.write("✅ - Alle Daten vollständig")
                 st.write("⚠️ - Fehlende Daten (siehe Spalte 'Fehlende Daten')")
-                
+
                 if any(pdf.has_unknown_birthdays for pdf in st.session_state.generated_pdfs):
                     st.warning("⚠️ Es fehlen Geburtsdaten für einige Spieler")
                 if any(not pdf.distance for pdf in st.session_state.generated_pdfs):

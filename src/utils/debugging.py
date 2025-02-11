@@ -17,7 +17,7 @@ class DebugEntry:
 
 class DebugManager:
     """Manage debug information and display."""
-    
+
     def __init__(self):
         """Initialize debug manager."""
         logger.debug("Initializing DebugManager")
@@ -25,7 +25,7 @@ class DebugManager:
         if 'debug_entries_list' not in st.session_state:
             st.session_state.debug_entries_list = deque(maxlen=1000)  # Limit to last 1000 entries
             logger.debug("Created new debug entries list in session state")
-        
+
         # Counter for unique IDs
         if 'debug_entry_counter' not in st.session_state:
             st.session_state.debug_entry_counter = 0
@@ -35,7 +35,7 @@ class DebugManager:
         """Add a debug entry."""
         # Increment counter for unique ID
         st.session_state.debug_entry_counter += 1
-        
+
         entry = DebugEntry(
             id=f"entry_{st.session_state.debug_entry_counter}_{int(time.time()*1000)}",
             timestamp=datetime.now().strftime("%H:%M:%S.%f")[:-3],
@@ -43,10 +43,10 @@ class DebugManager:
             message=message,
             details=details or {}
         )
-        
+
         # Add to deque and force streamlit to recognize the change
         st.session_state.debug_entries_list.append(entry)
-        
+
         # Log to loguru
         logger.debug(f"{entry.category}: {entry.message}")
         if details:
@@ -56,13 +56,13 @@ class DebugManager:
         """Render debug information in sidebar."""
         with st.sidebar:
             st.header("🐛 Debug Information")
-            
+
             # Add auto-refresh checkbox
             auto_refresh = st.checkbox("Auto-refresh", value=True)
-            
+
             if auto_refresh:
                 st.empty()  # This will force a rerun periodically
-            
+
             # Add filters
             categories = list(set(entry.category for entry in st.session_state.debug_entries_list))
             selected_categories = st.multiselect(
@@ -70,10 +70,10 @@ class DebugManager:
                 categories,
                 default=categories
             )
-            
+
             # Add search
             search_term = st.text_input("Search in messages", "")
-            
+
             # Clear button
             col1, col2 = st.columns(2)
             with col1:
@@ -86,17 +86,17 @@ class DebugManager:
                 if st.button("Export Log"):
                     logger.debug("Exporting debug log")
                     self._export_debug_log()
-            
+
             # Display entries
             st.markdown("### Debug Log")
             st.markdown(f"Total entries: {len(st.session_state.debug_entries_list)}")
-            
+
             # Create a container for the log entries
             log_container = st.container()
-            
+
             with log_container:
                 for entry in reversed(list(st.session_state.debug_entries_list)):
-                    if (entry.category in selected_categories and 
+                    if (entry.category in selected_categories and
                         (not search_term or search_term.lower() in entry.message.lower())):
                         with st.expander(
                             f"[{entry.timestamp}] {entry.category}",
@@ -149,7 +149,7 @@ class DebugManager:
             "summary": self._get_data_summary(data),
             "timestamp": datetime.now().isoformat()
         }
-        
+
         self.add_entry(
             category="Data Processing",
             message=context,
@@ -196,7 +196,7 @@ class DebugManager:
             }
             for entry in st.session_state.debug_entries_list
         ]
-        
+
         st.download_button(
             "Download Debug Log",
             data=json.dumps(export_data, indent=2),

@@ -32,19 +32,19 @@ class PDFGenerator:
         """Generate PDF for a game."""
         try:
             logger.debug(f"Starting PDF generation for game: {game_details.get('Spielplan_ID', 'Unknown')}")
-            
+
             # Extract date and liga_id
             date = game_details.get('Date', 'Unknown')
             liga_id = liga_info.liga_id if liga_info else 'Unknown'
-            
+
             # Create filename
             filename = f"{liga_id}_{date}_{liga_info.liganame}.pdf"
             filepath = os.path.join(self.output_dir, filename)
-            
+
             # Read template
             template = PdfReader(self.template_path)
-            
-            
+
+
             logger.debug(liga_info)
             # Basic form fields
             data = {
@@ -67,10 +67,10 @@ class PDFGenerator:
             try:
                 # Try to get location information using Google Maps
                 formatted_address, location_details = self.google_maps_client.get_gym_location(
-                    home_team, 
+                    home_team,
                     home_hall
                 )
-                
+
                 if formatted_address:
                     try:
                         # Calculate distance from our home gym
@@ -79,7 +79,7 @@ class PDFGenerator:
                             home_gym_address,
                             formatted_address
                         )
-                        
+
                         data["(Name oder SpielortRow1)"] = formatted_address
                         if distance is not None:
                             round_trip_distance = ceil(distance * 2)
@@ -93,7 +93,7 @@ class PDFGenerator:
                     # Fallback: Use basic location information
                     logger.warning(f"Using fallback location for {home_team} - {home_hall}")
                     data["(Name oder SpielortRow1)"] = f"{home_team} - {home_hall}"
-                    
+
             except Exception as e:
                 logger.error(f"Error with location lookup: {e}")
                 # Fallback: Use basic location information
@@ -119,20 +119,20 @@ class PDFGenerator:
                         birthday_text, found = self._lookup_birthday(player, birthday_lookup)  # Use the new method
                         if not found:
                             has_unknown_birthdays = True
-                        
+
                         name_text = name
-                    
+
                     # Add name to Name oder Spielort field
                     data[f"(Name oder SpielortRow{idx})"] = name_text + "  " # stupid hack to prevent text clipping
                     # Add birthday to Einzelteilngeb field
                     data[f"(EinzelteilngebRow{idx})"] = birthday_text + "    " # stupid hack to prevent text clipping
                     data[f"(km  Hin und Rückfahrt Row{idx})"] = f"{round_trip_distance}"
-                    
+
                     logger.debug(f"Added to row {idx}:")
                     logger.debug(f"  Name: {name_text}")
                     logger.debug(f"  Birthday: {birthday_text}")
                     logger.debug(f"  Distance: {round_trip_distance}")
-                    
+
                 except Exception as e:
                     logger.error(f"Error processing player for row {idx}: {e}")
                     continue
@@ -177,7 +177,7 @@ class PDFGenerator:
         except Exception as e:
             logger.error(f"Error generating PDF: {e}")
             return None
-        
+
     def generate_archive_pdf(
         self,
         league_info: Dict,
@@ -188,21 +188,21 @@ class PDFGenerator:
         """Generate PDF for archive games in a league."""
         try:
             logger.debug(f"Starting archive PDF generation for league: {league_info['name']}")
-            
+
             # Create filename
             filename = f"archive_{league_info['liga_id']}_{league_info['season_id']}_{league_info['name']}.pdf"
             filepath = os.path.join(self.output_dir, filename)
-            
+
             # Read template
             template = PdfReader(self.template_path)
-            
+
             if league_info['bereich'] == "männlich":
                 league_info['gender_short'] = "M"
             elif league_info['bereich'] == "weiblich":
                 league_info['gender_short']  = "W"
-            
+
             logger.debug(league_info)
-            
+
             # Basic form fields
             data = {
                 "(Verein)": club_name,
@@ -224,10 +224,10 @@ class PDFGenerator:
                     try:
                         # Try to get location information using Google Maps
                         formatted_address, location_details = self.google_maps_client.get_gym_location(
-                            home_team, 
+                            home_team,
                             ""  # No specific hall name from archive
                         )
-                        
+
                         if formatted_address:
                             try:
                                 # SKIP FOR ARCHIVE AS DATA IS NOT AVAILABLE
@@ -237,7 +237,7 @@ class PDFGenerator:
                                     home_gym_address,
                                     formatted_address
                                 )
-                                
+
                                 data[f"(Name oder SpielortRow{idx})"] = f" {formatted_address} ({home_team}) "
                                 logger.debug(f"Set location: {formatted_address}")
                                 if distance is not None:
@@ -252,17 +252,17 @@ class PDFGenerator:
                             # Fallback: Use basic location information
                             logger.warning(f"Using fallback location for {home_team}")
                             data[f"(Name oder SpielortRow{idx})"] = home_team
-                            
+
                     except Exception as e:
                         logger.error(f"Error with location lookup: {e}")
                         data[f"(Name oder SpielortRow{idx})"] = home_team
 
                     # Add game date
                     data[f"(DatumRow{idx})"] = game['datum']
-                    
+
                     games_processed += 1
                     logger.debug(f"Added game {idx}: {home_team} on {game['datum']}")
-                    
+
                 except Exception as e:
                     logger.error(f"Error processing game for row {idx}: {e}")
                     continue
@@ -311,15 +311,15 @@ class PDFGenerator:
         except Exception as e:
             logger.error(f"Error generating archive PDF: {e}")
             return None
-        
+
     def _lookup_birthday(self, player: Dict, birthday_lookup: Dict[str, str]) -> Tuple[str, bool]:
         """
         Look up birthday for a player, handling middle names and case inconsistencies.
-        
+
         Args:
             player: Player dictionary with name information.
             birthday_lookup: Birthday lookup dictionary mapping "lastname, firstname" to birthday.
-            
+
         Returns:
             Tuple of (birthday string, success boolean).
         """

@@ -6,10 +6,10 @@ import re
 def clean_number(value: str) -> float:
     """
     Clean and convert string value to float, handling parentheses and other characters.
-    
+
     Args:
         value: String value to convert
-        
+
     Returns:
         float: Cleaned number
     """
@@ -23,7 +23,7 @@ def clean_number(value: str) -> float:
 def sum_kilometers(pdf_directory: str):
     """
     Sum up all 'Summe km' values from PDFs in directory.
-    
+
     Args:
         pdf_directory: Directory containing PDF files
     """
@@ -31,9 +31,9 @@ def sum_kilometers(pdf_directory: str):
         # Get all PDF files in directory
         pdf_files = sorted([f for f in os.listdir(pdf_directory) if f.endswith('.pdf')])
         total_files = len(pdf_files)
-        
+
         logger.info(f"Found {total_files} PDF files to process")
-        
+
         total_km = 0
         processed_files = []
         failed_files = []
@@ -47,7 +47,7 @@ def sum_kilometers(pdf_directory: str):
                 # Read PDF
                 template = PdfReader(filepath)
                 found_km = False
-                
+
                 # Look for Summe km field
                 for page in template.pages:
                     if page.Annots:
@@ -68,7 +68,7 @@ def sum_kilometers(pdf_directory: str):
                                     except ValueError as e:
                                         logger.warning(f"Could not convert value '{annotation.V}' to number in {pdf_file}")
                                         failed_files.append((pdf_file, f"Invalid value: {annotation.V}"))
-                
+
                 if not found_km:
                     logger.warning(f"No valid 'Summe km' value found in {pdf_file}")
                     failed_files.append((pdf_file, "No valid km value found"))
@@ -81,12 +81,12 @@ def sum_kilometers(pdf_directory: str):
         # Summary
         logger.info("\nSummary:")
         logger.info(f"Successfully processed: {len(processed_files)} of {total_files} files")
-        
+
         # Show successful files and their values
         logger.info("\nProcessed files:")
         for pdf_file, km in processed_files:
             logger.info(f"- {pdf_file}: {km:.2f} km")
-        
+
         # Show failed files
         if failed_files:
             logger.warning("\nFailed files:")

@@ -24,36 +24,36 @@ def main():
             os.getenv("STREAMLIT_DEBUG", "false").lower() == "true" or
             "--debug" in sys.argv
         )
-        
+
         # Setup logging only once
         if 'logging_initialized' not in st.session_state:
             setup_logging(debug_mode)
             st.session_state.logging_initialized = True
             logger.info(f"Starting application in {'debug' if debug_mode else 'normal'} mode")
-        
+
         # Initialize debug manager if in debug mode and not already initialized
         if debug_mode and 'debug_manager' not in st.session_state:
             debug_manager = DebugManager()
             st.session_state.debug_manager = debug_manager
             logger.debug("Debug manager initialized")
-        
+
         # Initialize session state
         SessionState.init_state()
-        
+
         # Initialize authenticator in session state if not exists
         if 'authenticator' not in st.session_state:
             st.session_state.authenticator = BBAuthenticator()
             logger.debug("Authenticator initialized")
-        
+
         st.title("Basketball Reisekosten Generator")
 
         # Rest of your code...
         # Create tabs for current season and archive
         tab1, tab2 = st.tabs(["Aktuelle Saison", "Archiv"])
-        
+
         # Create main page instance
         page = MainPage()
-        
+
         with tab1:
             # Regular season functionality
             page.render_current_season()
@@ -72,7 +72,7 @@ def main():
                         st.session_state.is_logged_in = False
                         st.session_state.authenticator = BBAuthenticator()
                         st.rerun()
-        
+
     except Exception as e:
         logger.error(f"Unexpected error: {e}", exc_info=True)
         st.error(f"Ein unerwarteter Fehler ist aufgetreten: {str(e)}")

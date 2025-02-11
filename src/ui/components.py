@@ -20,7 +20,7 @@ class UIComponents:
     ) -> bool:
         """
         Render file upload widget with validation.
-        
+
         Returns:
             bool: True if file was successfully uploaded and validated
         """
@@ -45,7 +45,7 @@ class UIComponents:
                         df = pd.read_csv(uploaded_file)
                     else:
                         df = pd.read_excel(uploaded_file)
-                    
+
                     if DataProcessor.validate_dataframe(df, validation_context):
                         # Store DataFrame in session state
                         if key == "player_upload":
@@ -54,7 +54,7 @@ class UIComponents:
                         else:  # game_upload
                             st.session_state.uploaded_df = df
                             st.session_state.game_data_status = True
-                        
+
                         st.session_state[status_key] = True
                         return True
                     else:
@@ -65,7 +65,7 @@ class UIComponents:
             except Exception as e:
                 logger.error(f"Error reading file: {e}")
                 st.error(f"Fehler beim Lesen der Datei: {str(e)}")
-        
+
         return st.session_state[status_key]
 
     @staticmethod

@@ -12,7 +12,7 @@ class GoogleMapsAPIError(Exception):
 
 class GoogleMapsClient:
     """Client for interacting with Google Maps APIs."""
-    
+
     def __init__(self):
         self.api_key = GOOGLE_MAPS_CONFIG["api_key"]
         self.base_url = "https://maps.googleapis.com/maps/api"
@@ -21,13 +21,13 @@ class GoogleMapsClient:
         self.retry_delay = GOOGLE_MAPS_CONFIG.get("retry_delay", 1)
 
     def get_gym_location(
-        self, 
-        team_name: str, 
+        self,
+        team_name: str,
         hall_name: str
     ) -> Tuple[Optional[str], Optional[Dict]]:
         """
         Get detailed location information for a gym.
-        
+
         Args:
             team_name: Name of the team
             hall_name: Name of the hall
@@ -54,12 +54,12 @@ class GoogleMapsClient:
 
             # Try to find the place
             place_result = self._find_place(search_query)
-            
+
             if place_result:
                 logger.debug(f"Found place: {place_result.get('name', '')}")
                 # Get detailed place information
                 place_details = self._get_place_details(place_result['place_id'])
-                
+
                 if place_details:
                     logger.debug(f"Got place details: {place_details['formatted_address']}")
                     return (
@@ -92,14 +92,14 @@ class GoogleMapsClient:
     ) -> Optional[float]:
         """
         Calculate driving distance between two addresses.
-        
+
         Args:
             origin_address: Starting address
             destination_address: Ending address
-            
+
         Returns:
             Distance in kilometers or None if calculation fails
-            
+
         Raises:
             GoogleMapsAPIError: If there's an error with the API
         """
@@ -128,34 +128,34 @@ class GoogleMapsClient:
                         "mode": "driving",
                         "key": self.api_key
                     }
-                    
+
                     response = requests.get(url, params=params)
-                    
+
                     if self.debug:
                         st.session_state.debug_manager.log_response(
                             response,
                             "Distance Matrix Calculation"
                         )
-                    
+
                     response.raise_for_status()
                     data = response.json()
-                    
+
                     if data["status"] == "OVER_QUERY_LIMIT":
                         if attempt < self.max_retries - 1:
                             sleep(self.retry_delay * (attempt + 1))
                             continue
                         raise GoogleMapsAPIError("API quota exceeded")
-                    
-                    if (data["status"] == "OK" and 
-                        data["rows"] and 
-                        data["rows"][0]["elements"] and 
+
+                    if (data["status"] == "OK" and
+                        data["rows"] and
+                        data["rows"][0]["elements"] and
                         data["rows"][0]["elements"][0]["status"] == "OK"):
-                        
+
                         # Convert meters to kilometers
                         distance = data["rows"][0]["elements"][0]["distance"]["value"] / 1000
                         logger.debug(f"Calculated distance: {distance:.1f}km")
                         return distance
-                    
+
                     error_msg = f"Distance calculation failed: {data['status']}"
                     logger.warning(error_msg)
                     raise GoogleMapsAPIError(error_msg)
@@ -188,7 +188,7 @@ class GoogleMapsClient:
                 "region": "de",
                 "language": "de"
             }
-            
+
             response = requests.get(url, params=params)
             response.raise_for_status()
             data = response.json()
@@ -198,7 +198,7 @@ class GoogleMapsClient:
 
             if data["status"] == "OK" and data["results"]:
                 return data["results"][0]
-            
+
             return None
 
         except Exception as e:
@@ -217,15 +217,15 @@ class GoogleMapsClient:
                 "key": self.api_key,
                 "fields": "formatted_address,geometry,name,place_id"
             }
-            
+
             response = requests.get(url, params=params)
             response.raise_for_status()
-            
+
             data = response.json()
-            
+
             if data["status"] == "OK":
                 return data["result"]
-            
+
             return None
 
         except RequestException as e:

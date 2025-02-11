@@ -18,7 +18,7 @@ class ArchiveFilter:
 
 class BasketballArchive:
     """Client for fetching archive data from basketball-bund.net."""
-    
+
     BASE_URL = "https://www.basketball-bund.net"
     ARCHIVE_URL = f"{BASE_URL}/index.jsp"
 
@@ -129,7 +129,7 @@ class BasketballArchive:
                     liga_id = None
                     table_link = None
                     schedule_link = None
-                    
+
                     for link in links:
                         href = link.get('href', '')
                         if 'Action=107' in href:  # Table link
@@ -180,7 +180,7 @@ class BasketballArchive:
         """Get all teams from a league's table page."""
         try:
             url = f"{self.ARCHIVE_URL}?Action=107&liga_id={liga_id}&saison_id={season_id}"
-            
+
             response = self.session.get(
                 url,
                 headers=self._get_headers()
@@ -225,12 +225,12 @@ class BasketballArchive:
         except Exception as e:
             logger.error(f"Error getting teams for league {liga_id}: {e}")
             return []
-        
+
     def get_away_games(self, league_info: Dict, team_name: str) -> List[Dict]:
         """Get all away games for a team from a league's schedule using Excel export."""
         try:
             logger.debug(f"Getting away games for {team_name} in league {league_info['name']}")
-            
+
             export_url = f"{self.BASE_URL}/servlet/sport.dbb.export.ExcelExportErgebnissePublic"
             params = {
                 'liga_id': league_info['liga_id'],
@@ -251,7 +251,7 @@ class BasketballArchive:
             with tempfile.NamedTemporaryFile(suffix='.xls', delete=False) as temp_file:
                 temp_file.write(response.content)
                 temp_file.flush()
-                
+
                 # Read Excel file with the exact column names from the format
                 df = pd.read_excel(
                     temp_file.name,
@@ -265,7 +265,7 @@ class BasketballArchive:
                     ]
                 )
                 logger.debug(f"Loaded Excel with {len(df)} rows")
-                
+
             # Clean up temp file
             os.unlink(temp_file.name)
 
@@ -274,23 +274,23 @@ class BasketballArchive:
             for _, row in df.iterrows():
                 try:
                     # Skip rows that don't have proper data or are marked with *
-                    if (pd.isna(row['Spieltag']) or 
-                        pd.isna(row['Spielnummer']) or 
+                    if (pd.isna(row['Spieltag']) or
+                        pd.isna(row['Spielnummer']) or
                         str(row['Spieltag']).endswith('*')):
                         continue
-                    
+
                     # Clean up the team names (remove asterisks and whitespace)
                     home_team = str(row['Heimmannschaft']).strip().rstrip('*')
                     away_team = str(row['Gastmannschaft']).strip().rstrip('*')
-                    
+
                     # Check if this is an away game for our team
                     if team_name.lower() in away_team.lower():
                         # Parse the date and time (format: DD.MM.YYYY HH:MM)
                         date_str = str(row['Datum']).strip()
-                        
+
                         # Clean up the score (remove any whitespace)
                         score = str(row['Endstand']).strip() if pd.notna(row['Endstand']) else ''
-                        
+
                         game_info = {
                             'spieltag': str(int(float(str(row['Spieltag']).split('*')[0]))),  # Handle potential decimals and asterisks
                             'nummer': str(int(float(str(row['Spielnummer']).split('*')[0]))),  # Handle potential decimals and asterisks
@@ -308,7 +308,7 @@ class BasketballArchive:
 
             # Sort games by date
             games.sort(key=lambda x: datetime.strptime(x['datum'], '%d.%m.%Y %H:%M'))
-            
+
             logger.info(f"Found {len(games)} away games for {team_name}")
             return games
 
@@ -319,9 +319,9 @@ class BasketballArchive:
                 logger.error(f"Response content: {response.content[:200]}")
             return []
     def _get_schedule_page(
-        self, 
-        liga_id: str, 
-        season_id: str, 
+        self,
+        liga_id: str,
+        season_id: str,
         start_row: int,
         team_name: str
     ) -> tuple[List[Dict], Optional[int]]:
@@ -366,14 +366,14 @@ class BasketballArchive:
                     if not cells[0].find('strike'):
                         # Get game number for deduplication
                         game_number = cells[1].text.strip()
-                        
+
                         # Skip if we've already seen this game
                         if game_number in seen_game_numbers:
                             continue
-                            
+
                         home_team = cells[3].text.strip()
                         away_team = cells[4].text.strip()
-                        
+
                         # Check if this is an away game for our team
                         if team_name.lower() in away_team.lower():
                             game_info = {
@@ -411,7 +411,7 @@ class BasketballArchive:
         except Exception as e:
             logger.error(f"Error getting schedule page: {e}")
             return [], None
-    
+
     def _get_headers(self) -> Dict:
             """Get common headers for requests."""
             return {
