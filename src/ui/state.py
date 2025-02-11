@@ -1,13 +1,13 @@
 import streamlit as st
-from typing import Optional
+from typing import Optional, Dict, Any
 from src.config import HOME_GYM_ADDRESS, PDF_CONFIG
 
 class SessionState:
     """Manage Streamlit session state."""
     
     @staticmethod
-    def init_state():
-        defaults = {
+    def init_state() -> None:
+        defaults: Dict[str, Any] = {
             "step_1_done": False,
             "step_2_done": False,
             "step_3_done": False,
@@ -31,13 +31,12 @@ class SessionState:
             if key not in st.session_state:
                 st.session_state[key] = default_value
 
-
     @staticmethod
-    def update_progress(step: int):
+    def update_progress(step: int) -> None:
         st.session_state[f"step_{step}_done"] = True
 
     @staticmethod
-    def reset_progress(step: Optional[int] = None):
+    def reset_progress(step: Optional[int] = None) -> None:
         if step:
             st.session_state[f"step_{step}_done"] = False
         else:

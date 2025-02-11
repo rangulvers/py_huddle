@@ -30,7 +30,7 @@ class MainPage:
         self.pdf_analyzer = PDFAnalyzer()
         self.ui = UIComponents()
         
-    def render_current_season(self):
+    def render_current_season(self) -> None:
         """Render the current season functionality."""
         st.title("🏀 Basketball Reisekosten Generator")
         # Show debug panel if in debug mode
@@ -51,38 +51,36 @@ class MainPage:
         if st.session_state.step_3_done:
             self._render_step_4()
 
-    def render_login_section(self):
-            """Render the login section."""
-            st.header("🔐 Login")
+    def render_login_section(self) -> None:
+        """Render the login section."""
+        st.header("🔐 Login")
+        
+        with st.form("login_form"):
+            st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
+            dotenv.load_dotenv()
             
-            with st.form("login_form"):
-                st.write("Bitte melden Sie sich an, um auf das Archiv zuzugreifen:")
-                dotenv.load_dotenv()
-                
-
-                username = st.text_input("Benutzername", value=os.getenv("BASKETBALL_BUND_USERNAME"))
-                password = st.text_input("Passwort", type="password", value=os.getenv("BASKETBALL_BUND_PASSWORD"))
-                
-                submitted = st.form_submit_button("Anmelden")
-                
-                if submitted:
-                    if username and password:
-                        credentials = LoginCredentials(username=username, password=password)
-                        success, error = st.session_state.authenticator.login(credentials)
+            username = st.text_input("Benutzername", value=os.getenv("BASKETBALL_BUND_USERNAME"))
+            password = st.text_input("Passwort", type="password", value=os.getenv("BASKETBALL_BUND_PASSWORD"))
+            
+            submitted = st.form_submit_button("Anmelden")
+            
+            if submitted:
+                if username and password:
+                    credentials = LoginCredentials(username=username, password=password)
+                    success, error = st.session_state.authenticator.login(credentials)
+                    
+                    if success:
+                        st.session_state.is_logged_in = True
+                        st.success("✅ Erfolgreich angemeldet!")
                         
-                        if success:
-                            st.session_state.is_logged_in = True
-                            st.success("✅ Erfolgreich angemeldet!")
-                            
-                        else:
-                            st.error(f"❌ Anmeldung fehlgeschlagen: {error}")
                     else:
-                        st.error("❌ Bitte Benutzername und Passwort eingeben!")
+                        st.error(f"❌ Anmeldung fehlgeschlagen: {error}")
+                else:
+                    st.error("❌ Bitte Benutzername und Passwort eingeben!")
 
-    def render(self):
+    def render(self) -> None:
         """Render the main page."""
         self.render_current_season()
-
 
     def _render_login_section(self):
         """Render the login section."""
@@ -663,7 +661,7 @@ class MainPage:
                                         )
                             
                             st.download_button(
-                                label="📦 Als ZIP herunterladen",
+                                label="��� Als ZIP herunterladen",
                                 data=zip_buffer.getvalue(),
                                 file_name="reisekosten_pdfs.zip",
                                 mime="application/zip",
